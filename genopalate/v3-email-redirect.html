@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenoPalate Quiz Prototypes – Viktor Build Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00223e;
+  --navy2:#0a1f3c;
+  --blue:#58a2d5;
+  --teal:#009c7d;
+  --teal-dark:#007d63;
+  --white:#ffffff;
+  --off-white:#f0f6fc;
+  --muted:#a8c4d8;
+  --purple:#ae4fd2;
+  --orange:#e8853d;
+  --mint:#4ecdc4;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:#0d1b2a;color:var(--white);min-height:100vh}
+
+/* TAB SWITCHER */
+.tab-bar{position:sticky;top:0;z-index:100;background:rgba(0,34,62,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(88,162,213,0.25);padding:0 16px}
+.tab-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:4px;padding:12px 0}
+.tab-btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:8px;border:1.5px solid rgba(88,162,213,0.3);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s var(--ease);white-space:nowrap;letter-spacing:0.02em}
+.tab-btn.active{background:var(--blue);border-color:var(--blue);color:var(--navy)}
+.tab-btn:hover:not(.active){background:rgba(88,162,213,0.12);color:var(--white)}
+.tab-logo{margin-left:auto;font-family:'DM Serif Display',serif;font-size:15px;color:var(--blue);opacity:0.7}
+
+/* META PANEL */
+.meta-panel{max-width:900px;margin:0 auto;padding:20px 16px 0}
+.meta-card{background:rgba(88,162,213,0.08);border:1px solid rgba(88,162,213,0.2);border-radius:12px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px 24px;margin-bottom:0}
+.meta-tag{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.meta-tag strong{color:var(--white);font-weight:600}
+.meta-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+/* QUIZ CONTAINER */
+.quiz-section{display:none;max-width:480px;margin:0 auto;padding:20px 16px 60px}
+.quiz-section.active{display:block}
+
+/* WELCOME SCREEN */
+.welcome{text-align:center;padding:40px 0 20px}
+.welcome-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;background:rgba(88,162,213,0.18);color:var(--blue);margin-bottom:20px}
+.welcome h1{font-family:'DM Serif Display',serif;font-size:clamp(28px,7vw,38px);line-height:1.15;margin-bottom:14px}
+.welcome h1 em{font-style:italic;color:var(--blue)}
+.welcome p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px}
+.welcome-cta{width:100%;padding:17px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;background:var(--teal);color:var(--white);border:none;border-radius:12px;cursor:pointer;letter-spacing:0.01em;transition:all 0.2s var(--ease)}
+.welcome-cta:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.trust-line{font-size:12px;color:var(--muted);margin-top:12px;opacity:0.8}
+.welcome-stats{display:flex;gap:0;margin-bottom:28px;border-radius:12px;overflow:hidden;border:1px solid rgba(88,162,213,0.15)}
+.stat-item{flex:1;padding:14px 8px;text-align:center;background:rgba(255,255,255,0.03)}
+.stat-item:not(:last-child){border-right:1px solid rgba(88,162,213,0.15)}
+.stat-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.progress-label span:last-child{color:var(--blue);font-weight:600}
+.progress-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:100px;transition:width 0.5s var(--ease)}
+
+/* QUESTION SCREEN */
+.q-screen{animation:fadeUp 0.35s var(--ease) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.q-label{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.q-text{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,26px);line-height:1.3;margin-bottom:22px}
+.q-sub{font-size:13px;color:var(--muted);margin-top:-14px;margin-bottom:22px;line-height:1.5}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.opt{padding:14px 16px;border-radius:12px;border:1.5px solid rgba(88,162,213,0.2);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.2s var(--ease);text-align:left;width:100%;font-family:'Outfit',sans-serif;color:var(--white);font-size:14px;font-weight:500;line-height:1.35;min-height:48px;display:flex;align-items:flex-start;gap:12px}
+.opt:hover{border-color:var(--blue);background:rgba(88,162,213,0.12);transform:translateY(-1px)}
+.opt.selected{border-color:var(--teal);background:rgba(0,156,125,0.18);color:var(--white)}
+.opt.selected .opt-icon{background:var(--teal);border-color:var(--teal);color:var(--white)}
+.opt-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(88,162,213,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,0.05);color:var(--muted);transition:all 0.2s}
+.opt-text{flex:1}
+.opt-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.3;font-weight:400}
+
+/* MULTI-SELECT hint */
+.multi-hint{font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:-16px}
+
+/* CARD-STYLE OPTIONS */
+.opt.card-style{flex-direction:column;padding:16px}
+.opt.card-style .opt-icon{margin-bottom:6px}
+.card-opt-title{font-size:15px;font-weight:600}
+
+/* LOGO OPTIONS (DNA providers) */
+.opt.has-logo{align-items:center}
+.provider-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(88,162,213,0.2);color:var(--blue);flex-shrink:0}
+
+/* NEXT BUTTON */
+.next-btn{width:100%;padding:16px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;background:var(--teal);color:var(--white);border:none;border-radius:12px;cursor:pointer;transition:all 0.2s var(--ease);letter-spacing:0.01em}
+.next-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.next-btn:not(:disabled):hover{background:var(--teal-dark);transform:translateY(-1px)}
+
+/* VALIDATION INTERSTITIAL */
+.interstitial{text-align:center;padding:40px 0;animation:fadeUp 0.4s var(--ease)}
+.interstitial-icon{font-size:48px;margin-bottom:20px}
+.interstitial h2{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:12px}
+.interstitial p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px}
+.interstitial .stat-big{font-family:'DM Serif Display',serif;font-size:52px;color:var(--blue);display:block}
+.interstitial-bar{height:3px;background:rgba(88,162,213,0.15);border-radius:100px;overflow:hidden;margin-bottom:20px}
+.interstitial-fill{height:100%;background:var(--blue);border-radius:100px;width:0;animation:intFill 3s var(--ease) forwards}
+@keyframes intFill{to{width:100%}}
+
+/* EMAIL CAPTURE */
+.email-screen{animation:fadeUp 0.35s var(--ease)}
+.teaser-card{background:rgba(255,255,255,0.05);border:1px solid rgba(88,162,213,0.2);border-radius:14px;padding:18px;margin-bottom:20px;position:relative;overflow:hidden}
+.teaser-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,34,62,0),rgba(0,34,62,0.7) 60%);pointer-events:none}
+.teaser-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.teaser-headline{font-family:'DM Serif Display',serif;font-size:17px;line-height:1.3;margin-bottom:8px}
+.teaser-blur{filter:blur(5px);opacity:0.6;font-size:14px;color:var(--muted)}
+.email-heading{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px}
+.email-sub{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.input-wrap{margin-bottom:12px}
+.input-wrap input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(88,162,213,0.25);border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;color:var(--white);outline:none;transition:border-color 0.2s}
+.input-wrap input::placeholder{color:rgba(255,255,255,0.3)}
+.input-wrap input:focus{border-color:var(--blue)}
+.input-label{font-size:12px;color:var(--muted);margin-bottom:5px;display:block}
+.trust-micro{font-size:11px;color:var(--muted);opacity:0.7;text-align:center;margin-top:8px;line-height:1.5}
+.type-teaser-card{text-align:center;padding:24px;background:rgba(255,255,255,0.04);border-radius:14px;border:1px solid rgba(88,162,213,0.2);margin-bottom:20px}
+.type-badge-wrap{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:100px;background:rgba(88,162,213,0.15);margin-bottom:12px}
+.type-icon-big{font-size:24px}
+.type-name-blur{font-family:'DM Serif Display',serif;font-size:20px;filter:blur(6px);color:var(--white)}
+.type-reveal-text{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* LOADING SCREEN */
+.loading-screen{text-align:center;padding:60px 0;animation:fadeUp 0.4s var(--ease)}
+.dna-helix{margin:0 auto 28px;width:64px;height:64px;position:relative}
+.helix-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--blue);animation:helixSpin 1.6s ease-in-out infinite}
+.helix-dot:nth-child(1){animation-delay:0s}
+.helix-dot:nth-child(2){animation-delay:0.2s}
+.helix-dot:nth-child(3){animation-delay:0.4s}
+.helix-dot:nth-child(4){animation-delay:0.6s}
+.helix-dot:nth-child(5){animation-delay:0.8s}
+@keyframes helixSpin{
+  0%{left:10px;top:0;opacity:0.3;transform:scale(0.6)}
+  25%{left:42px;top:12px;opacity:1;transform:scale(1)}
+  50%{left:10px;top:26px;opacity:0.3;transform:scale(0.6)}
+  75%{left:42px;top:40px;opacity:1;transform:scale(1)}
+  100%{left:10px;top:54px;opacity:0.3;transform:scale(0.6)}
+}
+.loading-bar-wrap{background:rgba(255,255,255,0.08);height:6px;border-radius:100px;overflow:hidden;margin:20px 0 14px}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:100px;width:0;transition:width 0.3s ease}
+.loading-pct{font-family:'DM Serif Display',serif;font-size:36px;color:var(--white)}
+.loading-msg{font-size:14px;color:var(--muted);height:20px;transition:opacity 0.3s}
+.geno-logo-loading{font-family:'DM Serif Display',serif;font-size:18px;color:var(--blue);margin-bottom:6px;opacity:0.8}
+
+/* RESULT PAGE */
+.result-screen{animation:fadeUp 0.4s var(--ease)}
+.result-headline{font-family:'DM Serif Display',serif;font-size:clamp(22px,5.5vw,30px);line-height:1.25;margin-bottom:12px}
+.result-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.result-product-card{background:linear-gradient(135deg,rgba(0,156,125,0.12),rgba(0,34,62,0.6));border:1.5px solid rgba(0,156,125,0.4);border-radius:16px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden}
+.result-product-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,156,125,0.25),transparent 70%);pointer-events:none}
+.rec-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;padding:4px 12px;border-radius:100px;background:var(--teal);color:var(--white);margin-bottom:14px}
+.product-name{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:8px}
+.product-price{display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
+.price-main{font-size:28px;font-weight:800;color:var(--white)}
+.price-orig{font-size:15px;color:var(--muted);text-decoration:line-through}
+.price-sub{font-size:12px;color:var(--muted)}
+.product-bullets{list-style:none;margin-bottom:18px}
+.product-bullets li{font-size:14px;color:rgba(255,255,255,0.85);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.product-bullets li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
+.result-cta{width:100%;padding:17px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;background:var(--teal);color:var(--white);border:none;border-radius:12px;cursor:pointer;transition:all 0.2s var(--ease);letter-spacing:0.02em}
+.result-cta:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.trust-bar{display:flex;flex-wrap:wrap;gap:8px 16px;margin:20px 0;padding:14px 0;border-top:1px solid rgba(88,162,213,0.15);border-bottom:1px solid rgba(88,162,213,0.15)}
+.trust-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.trust-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.testimonial-block{background:rgba(255,255,255,0.04);border-radius:12px;padding:18px;border-left:3px solid var(--blue)}
+.testimonial-text{font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85);font-style:italic;margin-bottom:10px}
+.testimonial-author{font-size:12px;color:var(--muted);font-weight:600}
+.star-row{color:#fbbf24;font-size:14px;margin-bottom:4px}
+
+/* TYPE REVEAL (V3) */
+.type-reveal-card{text-align:center;border-radius:16px;padding:30px 20px;margin-bottom:20px;border:1.5px solid}
+.type-reveal-card.type-teal{background:rgba(0,156,125,0.12);border-color:rgba(0,156,125,0.4)}
+.type-reveal-card.type-blue{background:rgba(88,162,213,0.12);border-color:rgba(88,162,213,0.4)}
+.type-reveal-card.type-purple{background:rgba(174,79,210,0.12);border-color:rgba(174,79,210,0.4)}
+.type-reveal-card.type-orange{background:rgba(232,133,61,0.12);border-color:rgba(232,133,61,0.4)}
+.type-reveal-card.type-mint{background:rgba(78,205,196,0.12);border-color:rgba(78,205,196,0.4)}
+.type-emoji{font-size:52px;margin-bottom:14px}
+.type-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;opacity:0.8}
+.type-title{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:12px}
+.type-desc{font-size:14px;line-height:1.6;opacity:0.8}
+.type-insight{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin:16px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85)}
+.type-insight strong{color:var(--blue)}
+.all-types{margin-top:20px}
+.all-types summary{font-size:14px;color:var(--blue);cursor:pointer;padding:12px 0;border-top:1px solid rgba(88,162,213,0.15)}
+.types-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.type-mini{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);text-align:center}
+.type-mini-emoji{font-size:22px;margin-bottom:6px}
+.type-mini-name{font-size:12px;font-weight:600}
+.type-mini-desc{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* COACH SECTION */
+.coach-section{background:rgba(88,162,213,0.06);border-radius:12px;padding:16px;margin-top:20px;display:flex;align-items:flex-start;gap:14px}
+.coach-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid rgba(88,162,213,0.4)}
+.coach-name{font-size:13px;font-weight:700}
+.coach-cred{font-size:11px;color:var(--blue);margin-bottom:6px}
+.coach-quote{font-size:12px;color:var(--muted);line-height:1.5;font-style:italic}
+
+/* PACKAGE SELECTION PAGE */
+.pkg-header{margin-bottom:24px}
+.pkg-headline{font-family:'DM Serif Display',serif;font-size:clamp(20px,5vw,28px);line-height:1.25;margin-bottom:8px}
+.pkg-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:0}
+.pkg-rec-banner{background:linear-gradient(135deg,rgba(0,156,125,0.15),rgba(0,34,62,0.5));border:1.5px solid rgba(0,156,125,0.45);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px}
+.pkg-rec-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.pkg-rec-text{font-size:13px;line-height:1.55;color:rgba(255,255,255,0.9)}
+.pkg-rec-text strong{color:var(--teal)}
+/* 3-card grid */
+.pkg-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.pkg-card{border-radius:14px;border:1.5px solid rgba(88,162,213,0.2);background:rgba(255,255,255,0.04);padding:18px;position:relative;transition:border-color 0.2s var(--ease)}
+.pkg-card.recommended{border-color:var(--teal);background:linear-gradient(135deg,rgba(0,156,125,0.1),rgba(0,34,62,0.55));box-shadow:0 0 0 1px rgba(0,156,125,0.25)}
+.pkg-card-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:var(--teal);color:var(--white);margin-bottom:10px}
+.pkg-card-title{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:4px}
+.pkg-card-tagline{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.4}
+.pkg-price-row{display:flex;align-items:baseline;gap:7px;margin-bottom:4px}
+.pkg-price-main{font-size:24px;font-weight:800;color:var(--white)}
+.pkg-price-orig{font-size:13px;color:var(--muted);text-decoration:line-through}
+.pkg-price-note{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.4}
+.pkg-card-note{font-size:11px;color:var(--teal);margin-bottom:12px;background:rgba(0,156,125,0.1);padding:6px 10px;border-radius:6px}
+.pkg-bullets{list-style:none;margin-bottom:14px}
+.pkg-bullets li{font-size:13px;color:rgba(255,255,255,0.82);padding:4px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.pkg-bullets li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
+.pkg-cta{width:100%;padding:14px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s var(--ease);letter-spacing:0.01em}
+.pkg-card.recommended .pkg-cta{background:var(--teal);color:var(--white)}
+.pkg-card.recommended .pkg-cta:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.pkg-card:not(.recommended) .pkg-cta{background:rgba(255,255,255,0.07);color:var(--white);border:1.5px solid rgba(88,162,213,0.3)}
+.pkg-card:not(.recommended) .pkg-cta:hover{background:rgba(88,162,213,0.15);transform:translateY(-1px)}
+/* Why we recommend */
+.pkg-why{background:rgba(88,162,213,0.06);border:1px solid rgba(88,162,213,0.15);border-radius:12px;padding:16px;margin-bottom:20px}
+.pkg-why-title{font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pkg-why-bullets{list-style:none}
+.pkg-why-bullets li{font-size:13px;color:rgba(255,255,255,0.82);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.5;border-bottom:1px solid rgba(88,162,213,0.1)}
+.pkg-why-bullets li:last-child{border-bottom:none}
+.pkg-why-bullets li::before{content:'→';color:var(--blue);font-weight:700;flex-shrink:0}
+/* Comparison table */
+.pkg-compare{margin-bottom:20px}
+.pkg-compare summary{font-size:13px;color:var(--blue);cursor:pointer;padding:12px 0;border-top:1px solid rgba(88,162,213,0.15);display:flex;align-items:center;gap:6px;list-style:none}
+.pkg-compare summary::-webkit-details-marker{display:none}
+.pkg-compare-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+.pkg-compare-table th{padding:8px 6px;text-align:center;font-weight:700;font-size:11px;color:var(--muted);border-bottom:1px solid rgba(88,162,213,0.2)}
+.pkg-compare-table th:first-child{text-align:left;color:var(--muted)}
+.pkg-compare-table th.col-rec{color:var(--teal)}
+.pkg-compare-table td{padding:8px 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;color:rgba(255,255,255,0.75)}
+.pkg-compare-table td:first-child{text-align:left;color:var(--muted);font-weight:500}
+.pkg-compare-table td.col-rec{color:var(--white);font-weight:600}
+.pkg-compare-table tr:last-child td{border-bottom:none}
+.chk-yes{color:var(--teal);font-weight:700}
+.chk-no{color:rgba(255,255,255,0.25)}
+/* FAQ */
+.pkg-faq{margin-bottom:20px}
+.pkg-faq-title{font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.faq-item{border-bottom:1px solid rgba(88,162,213,0.12)}
+.faq-q{width:100%;background:none;border:none;color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;text-align:left;padding:12px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.faq-q .faq-arrow{color:var(--blue);font-size:14px;flex-shrink:0;transition:transform 0.2s}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.6;padding:0 0 12px;display:none}
+.faq-item.open .faq-a{display:block}
+/* sticky mobile CTA */
+.sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(0,22,40,0.97);backdrop-filter:blur(12px);border-top:1px solid rgba(0,156,125,0.3);padding:12px 16px;z-index:200}
+.sticky-cta-inner{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.sticky-cta-label{font-size:12px;color:var(--muted);flex:1;line-height:1.3}
+.sticky-cta-label strong{color:var(--white);display:block}
+.sticky-cta-btn{background:var(--teal);color:var(--white);border:none;border-radius:10px;padding:12px 18px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s}
+.sticky-cta-btn:hover{background:var(--teal-dark)}
+@media(max-width:640px){.sticky-cta{display:block}}
+
+/* UTILITY */
+.hidden{display:none!important}
+.back-btn{background:none;border:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:5px;transition:color 0.2s}
+.back-btn:hover{color:var(--white)}
+.section-divider{height:1px;background:rgba(88,162,213,0.12);margin:20px 0}
+
+@media(prefers-reduced-motion:reduce){
+  .q-screen,.interstitial,.loading-screen,.result-screen,.email-screen{animation:none}
+  .welcome-cta:hover,.next-btn:hover,.result-cta:hover,.opt:hover{transform:none}
+}
+
+/* ===== NEW RESULT PAGE: PROFILE + REDIRECT ===== */
+.profile-card{background:linear-gradient(135deg,rgba(0,156,125,0.14),rgba(0,34,62,0.65));border:1.5px solid rgba(0,156,125,0.45);border-radius:18px;padding:24px 22px;margin-bottom:22px;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;top:-50px;right:-50px;width:140px;height:140px;background:radial-gradient(circle,rgba(0,156,125,0.22),transparent 70%);pointer-events:none}
+.profile-card-label{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.profile-type-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-type-emoji{font-size:36px;flex-shrink:0}
+.profile-type-name{font-family:'DM Serif Display',serif;font-size:22px;line-height:1.2}
+.profile-type-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:rgba(0,156,125,0.25);color:var(--teal);margin-top:4px;display:inline-block}
+.profile-body{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6}
+
+/* V2-specific: clinical label style */
+.profile-card.clinical .profile-card-label{color:var(--blue)}
+.profile-card.clinical{border-color:rgba(88,162,213,0.45);background:linear-gradient(135deg,rgba(88,162,213,0.12),rgba(0,34,62,0.65))}
+.profile-card.clinical::before{background:radial-gradient(circle,rgba(88,162,213,0.18),transparent 70%)}
+
+/* INSIGHTS BLOCK */
+.insights-block{margin-bottom:22px}
+.insights-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.insight-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--teal);display:flex;gap:12px;align-items:flex-start}
+.insight-check{color:var(--teal);font-weight:800;font-size:16px;flex-shrink:0;margin-top:1px}
+.insight-text{font-size:13px;color:rgba(255,255,255,0.88);line-height:1.55}
+
+/* NEXT STEPS */
+.next-steps{background:rgba(88,162,213,0.06);border:1px solid rgba(88,162,213,0.15);border-radius:14px;padding:18px;margin-bottom:22px}
+.next-steps-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+.step-row{display:flex;gap:14px;align-items:flex-start;padding:8px 0}
+.step-row:not(:last-child){border-bottom:1px solid rgba(88,162,213,0.1)}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(88,162,213,0.2);border:1.5px solid rgba(88,162,213,0.4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--blue);flex-shrink:0}
+.step-content{flex:1}
+.step-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.step-detail{font-size:12px;color:var(--muted);line-height:1.45}
+
+/* MAIN REDIRECT CTA */
+.redirect-cta-wrap{text-align:center;margin-bottom:10px}
+.redirect-cta{display:block;width:100%;padding:18px 24px;font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--teal),#00b899);color:var(--white);border:none;border-radius:14px;cursor:pointer;transition:all 0.25s var(--ease);letter-spacing:0.01em;text-decoration:none;text-align:center;box-shadow:0 4px 20px rgba(0,156,125,0.3)}
+.redirect-cta:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,156,125,0.45)}
+.redirect-cta:active{transform:translateY(0)}
+.redirect-cta-note{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+.secondary-link{display:block;text-align:center;font-size:13px;color:var(--blue);opacity:0.8;margin-top:14px;text-decoration:none;transition:opacity 0.2s}
+.secondary-link:hover{opacity:1;text-decoration:underline}
+
+/* NEW STICKY: simplified redirect */
+.sticky-cta-redirect{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(0,22,40,0.97);backdrop-filter:blur(12px);border-top:1px solid rgba(0,156,125,0.3);padding:12px 16px;z-index:200}
+.sticky-cta-redirect-inner{max-width:480px;margin:0 auto}
+.sticky-cta-redirect-btn{display:block;width:100%;background:var(--teal);color:var(--white);border:none;border-radius:10px;padding:13px 18px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:background 0.2s;letter-spacing:0.01em}
+.sticky-cta-redirect-btn:hover{background:var(--teal-dark)}
+@media(max-width:640px){.sticky-cta-redirect{display:block}}
+</style>
+</head>
+<body>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active" onclick="switchQuiz('v1')">Short Sell <span style="opacity:0.6;font-weight:400">(5Q)</span></button>
+    <button class="tab-btn" onclick="switchQuiz('v2')">Diagnostic <span style="opacity:0.6;font-weight:400">(7Q)</span></button>
+    <button class="tab-btn" onclick="switchQuiz('v3')">Personality <span style="opacity:0.6;font-weight:400">(6Q)</span></button>
+    <span class="tab-logo">GenoPalate</span>
+  </div>
+</div>
+
+<!-- META PANELS -->
+<div id="meta-v1" class="meta-panel">
+  <div class="meta-card">
+    <div class="meta-tag"><span class="meta-dot"></span><strong>Variant 1: Short Sell</strong></div>
+  </div>
+</div>
+<div id="meta-v2" class="meta-panel hidden">
+  <div class="meta-card">
+    <div class="meta-tag"><span class="meta-dot"></span><strong>Variant 2: Diagnostic</strong></div>
+  </div>
+</div>
+<div id="meta-v3" class="meta-panel hidden">
+  <div class="meta-card">
+    <div class="meta-tag"><span class="meta-dot"></span><strong>Variant 3: Personality Profile</strong></div>
+  </div>
+</div>
+
+<!-- ==================== VARIANT 1: SHORT SELL ==================== -->
+<div id="quiz-v1" class="quiz-section active">
+  <!-- WELCOME -->
+  <div id="v1-welcome" class="welcome" style="opacity:0;transform:translateY(20px);animation:fadeUp 0.6s 0.1s var(--ease) both">
+    <div class="welcome-badge">DNA Nutrition Quiz</div>
+    <h1>Find Out What Your DNA Says About <em>Your</em> Diet</h1>
+    <p>Most diets fail because they weren't built for your genetics. 5 quick questions to discover what actually works for YOUR body.</p>
+    <div class="welcome-stats">
+      <div class="stat-item"><div class="stat-num">175K+</div><div class="stat-label">Members</div></div>
+      <div class="stat-item"><div class="stat-num">100+</div><div class="stat-label">DNA Markers</div></div>
+      <div class="stat-item"><div class="stat-num">24hr</div><div class="stat-label">Results</div></div>
+    </div>
+    <button class="welcome-cta" onclick="v1Start()">Take the Free Quiz →</button>
+    <div class="trust-line">Takes 90 seconds · No credit card required</div>
+  </div>
+
+  <!-- QUIZ FLOW (hidden until started) -->
+  <div id="v1-flow" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="v1-step-label">Step 1 of 5</span><span id="v1-pct">20%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="v1-bar" style="width:20%"></div></div>
+    </div>
+    <button class="back-btn" id="v1-back" onclick="v1Back()">← Back</button>
+
+    <!-- Q1 -->
+    <div id="v1-q1" class="q-screen">
+      <div class="q-label">Question 1</div>
+      <div class="q-text">What's your biggest nutrition frustration right now?</div>
+      <div class="options" id="v1-q1-opts">
+        <button class="opt" onclick="v1Select('q1','weight_management',this)"><span class="opt-icon">A</span><span class="opt-text">I've tried multiple diets and nothing sticks long-term</span></button>
+        <button class="opt" onclick="v1Select('q1','optimization',this)"><span class="opt-icon">B</span><span class="opt-text">I eat healthy but I'm not sure it's right for MY body</span></button>
+        <button class="opt" onclick="v1Select('q1','medical',this)"><span class="opt-icon">C</span><span class="opt-text">I have a health condition and need nutrition guidance</span></button>
+        <button class="opt" onclick="v1Select('q1','supplements',this)"><span class="opt-icon">D</span><span class="opt-text">I waste money on supplements I might not need</span></button>
+        <button class="opt" onclick="v1Select('q1','curiosity',this)"><span class="opt-icon">E</span><span class="opt-text">I just want to know what my DNA says about food</span></button>
+      </div>
+      <button class="next-btn" id="v1-q1-next" disabled onclick="v1Next(2)">Next →</button>
+    </div>
+
+    <!-- Q2 -->
+    <div id="v1-q2" class="q-screen hidden">
+      <div class="q-label">Question 2</div>
+      <div class="q-text">Do you already have DNA data from 23andMe or AncestryDNA?</div>
+      <div class="options" id="v1-q2-opts">
+        <button class="opt has-logo" onclick="v1Select('q2','upload_path',this)"><span class="opt-icon">A</span><span class="opt-text">Yes, I have 23andMe data</span><span class="provider-badge">23andMe</span></button>
+        <button class="opt has-logo" onclick="v1Select('q2','upload_path',this)"><span class="opt-icon">B</span><span class="opt-text">Yes, I have AncestryDNA data</span><span class="provider-badge">Ancestry</span></button>
+        <button class="opt" onclick="v1Select('q2','upload_path',this)"><span class="opt-icon">C</span><span class="opt-text">Yes, I have data from another provider</span></button>
+        <button class="opt" onclick="v1Select('q2','kit_path',this)"><span class="opt-icon">D</span><span class="opt-text">No, I don't have DNA data yet</span></button>
+        <button class="opt" onclick="v1Select('q2','kit_path',this)"><span class="opt-icon">E</span><span class="opt-text">I'm not sure</span></button>
+      </div>
+      <button class="next-btn" id="v1-q2-next" disabled onclick="v1Next(3)">Next →</button>
+    </div>
+
+    <!-- Q3 -->
+    <div id="v1-q3" class="q-screen hidden">
+      <div class="q-label">Question 3</div>
+      <div class="q-text">How do you want to approach your nutrition?</div>
+      <div class="options" id="v1-q3-opts">
+        <button class="opt" onclick="v1Select('q3','report_only',this)"><span class="opt-icon">A</span><span class="opt-text"><strong>Give me the data</strong> — I'll take it from here<div class="opt-sub">Perfect for self-starters who want clear direction</div></span></button>
+        <button class="opt" onclick="v1Select('q3','coaching',this)"><span class="opt-icon">B</span><span class="opt-text"><strong>I want a coach</strong> to help me put it into action<div class="opt-sub">Work 1:1 with an expert nutrition coach</div></span></button>
+        <button class="opt" onclick="v1Select('q3','premium',this)"><span class="opt-icon">C</span><span class="opt-text"><strong>I want the full program</strong> — testing, coaching, everything<div class="opt-sub">The most comprehensive approach available</div></span></button>
+      </div>
+      <button class="next-btn" id="v1-q3-next" disabled onclick="v1Next(4)">Next →</button>
+    </div>
+
+    <!-- Q4 -->
+    <div id="v1-q4" class="q-screen hidden">
+      <div class="q-label">Question 4</div>
+      <div class="q-text">Which of these sounds most like you?</div>
+      <div class="options" id="v1-q4-opts">
+        <button class="opt" onclick="v1Select('q4','keto_revelation',this)"><span class="opt-icon">A</span><span class="opt-text">I've been told to go low-carb but it never works for me</span></button>
+        <button class="opt" onclick="v1Select('q4','body_changed',this)"><span class="opt-icon">B</span><span class="opt-text">My body changed and what used to work doesn't anymore</span></button>
+        <button class="opt" onclick="v1Select('q4','plateau_breaker',this)"><span class="opt-icon">C</span><span class="opt-text">I'm doing everything right but still not seeing results</span></button>
+        <button class="opt" onclick="v1Select('q4','sensitivity_discovery',this)"><span class="opt-icon">D</span><span class="opt-text">I have food sensitivities but can't figure out which foods are the problem</span></button>
+      </div>
+      <button class="next-btn" id="v1-q4-next" disabled onclick="v1Next('email')">Next →</button>
+    </div>
+
+    <!-- EMAIL -->
+    <div id="v1-email" class="email-screen hidden">
+      <div class="q-label">Almost there</div>
+      <div class="teaser-card">
+        <div class="teaser-label">Based on your answers...</div>
+        <div class="teaser-headline" id="v1-teaser-text">Your nutrition profile suggests a specific genetic pattern...</div>
+        <div class="teaser-blur">Your personalized DNA nutrition plan includes 140+ specific food recommendations and your exact macro targets based on your genetic profile...</div>
+      </div>
+      <div class="email-heading">Enter your email to see your results</div>
+      <div class="email-sub">Your personalized DNA nutrition plan is ready. Where should we send it?</div>
+      <div class="input-wrap">
+        <label class="input-label">Email address *</label>
+        <input type="email" id="v1-email-input" placeholder="your@email.com">
+      </div>
+      <button class="next-btn" onclick="submitAndRedirect('v1')">See My Results →</button>
+      <div class="trust-micro">Your data is never sold · Unsubscribe anytime · HIPAA compliant</div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="v1-loading" class="loading-screen hidden">
+      <div class="geno-logo-loading">GenoPalate</div>
+      <div class="dna-helix">
+        <div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div>
+      </div>
+      <div class="loading-pct" id="v1-load-pct">0%</div>
+      <div class="loading-bar-wrap"><div class="loading-bar-fill" id="v1-load-bar"></div></div>
+      <div class="loading-msg" id="v1-load-msg">Matching your nutrition profile...</div>
+    </div>
+
+    <!-- RESULT: PROFILE + REDIRECT -->
+    <div id="v1-result" class="result-screen hidden">
+      <div class="result-headline" id="v1-result-headline">Your DNA may explain why low-carb diets keep failing you.</div>
+      <div class="result-sub">Here's what your answers tell us about your nutrition profile.</div>
+
+      <!-- Profile Card -->
+      <div class="profile-card" id="v1-profile-card">
+        <div class="profile-card-label">Your Nutrition Profile</div>
+        <div class="profile-type-row">
+          <div class="profile-type-emoji" id="v1-profile-emoji">🧬</div>
+          <div>
+            <div class="profile-type-name" id="v1-profile-name">Personalized DNA Nutrition Plan</div>
+            <span class="profile-type-tag" id="v1-profile-tag">Based on your answers</span>
+          </div>
+        </div>
+        <div class="profile-body" id="v1-profile-body">Your answers reveal a pattern seen in members who've struggled with standard dietary advice — not because of willpower, but because generic recommendations weren't built for your specific genetics.</div>
+      </div>
+
+      <!-- 3 Key Insights -->
+      <div class="insights-block">
+        <div class="insights-label">Key insights from your answers</div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v1-insight-1">Because you've tried multiple diets without lasting results, your DNA likely plays a major role in why previous approaches failed — not your effort.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v1-insight-2">Your pattern matches 73% of members who discovered their genetics require a different macro balance than standard diets prescribe.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v1-insight-3">Based on your guidance preference, GenoPalate has a matched program that gives you exactly the level of support you're looking for.</span>
+        </div>
+      </div>
+
+      <!-- Matched Testimonial -->
+      <div class="testimonial-block" id="v1-testimonial">
+        <div class="star-row">★★★★★</div>
+        <div class="testimonial-text">"I was told for years to go low-carb. GenoPalate showed me my DNA actually needs higher carbs. Lost 14 lbs in 6 weeks eating more carbs than I had in years."</div>
+        <div class="testimonial-author">— Terri M., verified customer</div>
+      </div>
+
+      <!-- What Happens Next -->
+      <div class="next-steps">
+        <div class="next-steps-label">What happens next</div>
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title" id="v1-step1-title">Get your DNA results</div>
+            <div class="step-detail" id="v1-step1-detail">Upload existing 23andMe/Ancestry data for results in 24 hours, or order a kit for results in 3–4 weeks.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Your registered dietitian reviews your genetic profile</div>
+            <div class="step-detail">A PhD-trained nutritionist analyzes your 100+ genetic markers and builds your personalized plan.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title" id="v1-step3-title">You get a personalized plan + guidance</div>
+            <div class="step-detail" id="v1-step3-detail">140+ specific food recommendations, your exact macro targets, and 23 nutrient insights — built for your genetics, not a generic population average.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main CTA -->
+      <div class="redirect-cta-wrap">
+        <a id="v1-redirect-cta" href="https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=kit_coaching" class="redirect-cta" target="_blank">See My Personalized Plan →</a>
+        <div class="redirect-cta-note">Recommended program based on your answers</div>
+      </div>
+
+      <!-- Trust bar -->
+      <div class="trust-bar">
+        <div class="trust-item">175,000+ members</div>
+        <div class="trust-item">PhD-founded</div>
+        <div class="trust-item">FSA/HSA eligible</div>
+        <div class="trust-item">24hr results (with upload)</div>
+      </div>
+
+      <!-- Secondary link -->
+      <a id="v1-secondary-link" href="https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v1" class="secondary-link" target="_blank">Not sure yet? See all our programs →</a>
+
+      <!-- FAQ -->
+      <div class="pkg-faq" style="margin-top:24px">
+        <div class="pkg-faq-title">Common questions</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What if I don't have DNA data yet? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">No problem — GenoPalate sends you an at-home kit (simple cheek swab). Results in 3–4 weeks. Already have 23andMe or AncestryDNA data? Upload it for $50 less with 24-hour results.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Is my DNA data private? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Your data is never sold or shared. GenoPalate is HIPAA-compliant and CLIA/CAP certified. You own your data and can request deletion at any time.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How accurate is DNA-based nutrition? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">GenoPalate analyzes 100+ genetic markers validated against peer-reviewed nutritional genomics research. Your results are reviewed by a registered dietitian before delivery — not just an algorithm.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Can I cancel if I choose a subscription? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Yes, anytime. No contract, no cancellation fees. Most members stay because the coaching keeps delivering results — but you're never locked in.</div>
+        </div>
+      </div>
+      <div class="section-divider"></div>
+      <button class="back-btn" style="justify-content:center;width:100%" onclick="v1Reset()">← Retake quiz</button>
+    </div>
+  </div>
+</div>
+<!-- Sticky redirect CTA (V1) -->
+<div class="sticky-cta-redirect" id="v1-sticky" style="display:none">
+  <div class="sticky-cta-redirect-inner">
+    <button class="sticky-cta-redirect-btn" id="v1-sticky-btn" onclick="v1StickyClick()">See My Personalized Plan →</button>
+  </div>
+</div>
+
+<!-- ==================== VARIANT 2: DIAGNOSTIC ==================== -->
+<div id="quiz-v2" class="quiz-section hidden">
+  <!-- WELCOME -->
+  <div id="v2-welcome" class="welcome" style="opacity:0;transform:translateY(20px);animation:fadeUp 0.6s 0.1s var(--ease) both">
+    <div class="welcome-badge">Personalized Nutrition Assessment</div>
+    <h1>Your DNA-Based Nutrition Plan Starts With 7 Questions</h1>
+    <p>We'll analyze your health history, goals, and existing data to recommend the program your body actually needs right now.</p>
+    <div class="welcome-stats">
+      <div class="stat-item"><div class="stat-num">73%</div><div class="stat-label">tried 3+ diets first</div></div>
+      <div class="stat-item"><div class="stat-num">RD</div><div class="stat-label">reviewed results</div></div>
+      <div class="stat-item"><div class="stat-num">HIPAA</div><div class="stat-label">compliant</div></div>
+    </div>
+    <button class="welcome-cta" onclick="v2Start()">Start My Assessment →</button>
+    <div class="trust-line">Takes 3 minutes · Medical-grade privacy</div>
+  </div>
+
+  <!-- QUIZ FLOW -->
+  <div id="v2-flow" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="v2-step-label">Step 1 of 7</span><span id="v2-pct">14%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="v2-bar" style="width:14%"></div></div>
+    </div>
+    <button class="back-btn" id="v2-back" onclick="v2Back()">← Back</button>
+
+    <!-- Q1 -->
+    <div id="v2-q1" class="q-screen">
+      <div class="q-label">Question 1</div>
+      <div class="q-text">What brought you here today?</div>
+      <div class="options" id="v2-q1-opts">
+        <button class="opt" onclick="v2Select('q1','weight_loss',this)"><span class="opt-icon">A</span><span class="opt-text">I want to lose weight and keep it off</span></button>
+        <button class="opt" onclick="v2Select('q1','glp1',this)"><span class="opt-icon">B</span><span class="opt-text">I'm on GLP-1 medication and need nutrition support</span></button>
+        <button class="opt" onclick="v2Select('q1','body_changing',this)"><span class="opt-icon">C</span><span class="opt-text">My body is changing (menopause, aging, hormones)</span></button>
+        <button class="opt" onclick="v2Select('q1','optimize',this)"><span class="opt-icon">D</span><span class="opt-text">I want to optimize my health and performance</span></button>
+        <button class="opt" onclick="v2Select('q1','health_concerns',this)"><span class="opt-icon">E</span><span class="opt-text">I have specific health concerns my doctor suggested I address through nutrition</span></button>
+        <button class="opt" onclick="v2Select('q1','curiosity',this)"><span class="opt-icon">F</span><span class="opt-text">I'm curious what my DNA says about my diet</span></button>
+      </div>
+      <button class="next-btn" id="v2-q1-next" disabled onclick="v2Next(2)">Next →</button>
+    </div>
+
+    <!-- Q2 multi-select -->
+    <div id="v2-q2" class="q-screen hidden">
+      <div class="q-label">Question 2</div>
+      <div class="q-text">Which of these have you tried in the past 2 years?</div>
+      <div class="multi-hint">Select all that apply</div>
+      <div class="options" id="v2-q2-opts">
+        <button class="opt" onclick="v2Multi(this,'keto')"><span class="opt-icon">✓</span><span class="opt-text">Keto or low-carb</span></button>
+        <button class="opt" onclick="v2Multi(this,'calorie')"><span class="opt-icon">✓</span><span class="opt-text">Calorie counting / macro tracking</span></button>
+        <button class="opt" onclick="v2Multi(this,'ww')"><span class="opt-icon">✓</span><span class="opt-text">Weight Watchers / Noom / similar program</span></button>
+        <button class="opt" onclick="v2Multi(this,'med')"><span class="opt-icon">✓</span><span class="opt-text">Mediterranean diet</span></button>
+        <button class="opt" onclick="v2Multi(this,'if')"><span class="opt-icon">✓</span><span class="opt-text">Intermittent fasting</span></button>
+        <button class="opt" onclick="v2Multi(this,'dietitian')"><span class="opt-icon">✓</span><span class="opt-text">Working with a nutritionist or dietitian</span></button>
+        <button class="opt" onclick="v2Multi(this,'glp1_used')"><span class="opt-icon">✓</span><span class="opt-text">GLP-1 medication (Ozempic, Wegovy, Mounjaro)</span></button>
+        <button class="opt" onclick="v2Multi(this,'none')"><span class="opt-icon">✓</span><span class="opt-text">None of these — I'm starting fresh</span></button>
+      </div>
+      <button class="next-btn" id="v2-q2-next" onclick="v2Next('interstitial')">Next →</button>
+    </div>
+
+    <!-- INTERSTITIAL -->
+    <div id="v2-interstitial" class="hidden">
+      <div class="interstitial">
+        <div class="interstitial-icon">💡</div>
+        <h2>You're not alone</h2>
+        <span class="stat-big">73%</span>
+        <p>of our members tried <strong>3 or more approaches</strong> before finding what actually works with their DNA.</p>
+        <div class="interstitial-bar"><div class="interstitial-fill" id="v2-int-fill"></div></div>
+        <button class="next-btn" id="v2-int-btn" onclick="v2Next(3)" style="opacity:0.6">Continue (auto in 3s)</button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div id="v2-q3" class="q-screen hidden">
+      <div class="q-label">Question 3</div>
+      <div class="q-text">Do you already have DNA data from a testing service?</div>
+      <div class="options" id="v2-q3-opts">
+        <button class="opt has-logo" onclick="v2Select('q3','upload',this)"><span class="opt-icon">A</span><span class="opt-text">Yes — 23andMe</span><span class="provider-badge">23andMe</span></button>
+        <button class="opt has-logo" onclick="v2Select('q3','upload',this)"><span class="opt-icon">B</span><span class="opt-text">Yes — AncestryDNA</span><span class="provider-badge">Ancestry</span></button>
+        <button class="opt" onclick="v2Select('q3','upload',this)"><span class="opt-icon">C</span><span class="opt-text">Yes — another provider</span></button>
+        <button class="opt" onclick="v2Select('q3','kit',this)"><span class="opt-icon">D</span><span class="opt-text">No, I don't have DNA data</span></button>
+      </div>
+      <button class="next-btn" id="v2-q3-next" disabled onclick="v2Next(4)">Next →</button>
+    </div>
+
+    <!-- Q4 -->
+    <div id="v2-q4" class="q-screen hidden">
+      <div class="q-label">Question 4</div>
+      <div class="q-text">What's your #1 health concern right now?</div>
+      <div class="options" id="v2-q4-opts">
+        <button class="opt" onclick="v2Select('q4','weight',this)"><span class="opt-icon">A</span><span class="opt-text">Weight loss that actually lasts</span></button>
+        <button class="opt" onclick="v2Select('q4','energy',this)"><span class="opt-icon">B</span><span class="opt-text">Energy and reducing fatigue</span></button>
+        <button class="opt" onclick="v2Select('q4','digestive',this)"><span class="opt-icon">C</span><span class="opt-text">Digestive issues or food sensitivities</span></button>
+        <button class="opt" onclick="v2Select('q4','medication',this)"><span class="opt-icon">D</span><span class="opt-text">Managing nutrition alongside medication</span></button>
+        <button class="opt" onclick="v2Select('q4','menopause',this)"><span class="opt-icon">E</span><span class="opt-text">Navigating menopause or hormonal changes</span></button>
+        <button class="opt" onclick="v2Select('q4','longevity',this)"><span class="opt-icon">F</span><span class="opt-text">Long-term health and disease prevention</span></button>
+      </div>
+      <button class="next-btn" id="v2-q4-next" disabled onclick="v2Next(5)">Next →</button>
+    </div>
+
+    <!-- Q5 -->
+    <div id="v2-q5" class="q-screen hidden">
+      <div class="q-label">Question 5</div>
+      <div class="q-text">How would you describe your relationship with food right now?</div>
+      <div class="options" id="v2-q5-opts">
+        <button class="opt" onclick="v2Select('q5','frustrated',this)"><span class="opt-icon">A</span><span class="opt-text">Frustrated — I feel like I'm doing everything wrong</span></button>
+        <button class="opt" onclick="v2Select('q5','confused',this)"><span class="opt-icon">B</span><span class="opt-text">Confused — there's too much conflicting advice</span></button>
+        <button class="opt" onclick="v2Select('q5','stuck',this)"><span class="opt-icon">C</span><span class="opt-text">Stuck — I know what to do but can't stay consistent</span></button>
+        <button class="opt" onclick="v2Select('q5','optimistic',this)"><span class="opt-icon">D</span><span class="opt-text">Cautiously optimistic — I'm ready to try something new</span></button>
+        <button class="opt" onclick="v2Select('q5','empowered',this)"><span class="opt-icon">E</span><span class="opt-text">Empowered — I just need the right data to fine-tune</span></button>
+      </div>
+      <button class="next-btn" id="v2-q5-next" disabled onclick="v2Next(6)">Next →</button>
+    </div>
+
+    <!-- Q6 -->
+    <div id="v2-q6" class="q-screen hidden">
+      <div class="q-label">Question 6</div>
+      <div class="q-text">How much support do you want on this journey?</div>
+      <div class="options" id="v2-q6-opts">
+        <button class="opt" onclick="v2Select('q6','solo',this)"><span class="opt-icon">A</span><span class="opt-text"><strong>Just the insights</strong> — I'll implement on my own</span></button>
+        <button class="opt" onclick="v2Select('q6','coaching',this)"><span class="opt-icon">B</span><span class="opt-text"><strong>Regular check-ins</strong> with an expert to stay on track</span></button>
+        <button class="opt" onclick="v2Select('q6','full',this)"><span class="opt-icon">C</span><span class="opt-text"><strong>Complete program</strong> — testing, coaching, and personalized supplements</span></button>
+      </div>
+      <button class="next-btn" id="v2-q6-next" disabled onclick="v2Next('email')">Next →</button>
+    </div>
+
+    <!-- EMAIL -->
+    <div id="v2-email" class="email-screen hidden">
+      <div class="q-label">Your Assessment Is Ready</div>
+      <div class="type-teaser-card">
+        <div class="teaser-label">Your Nutrition Type</div>
+        <div class="type-badge-wrap">
+          <span class="type-icon-big">🧬</span>
+          <span class="type-name-blur" id="v2-type-blur">Metabolic Reset Candidate</span>
+        </div>
+        <div class="type-reveal-text">Your recommended program is waiting behind your email</div>
+      </div>
+      <div class="email-heading">Unlock Your Full Assessment</div>
+      <div class="email-sub">A registered dietitian has reviewed your answers. Enter your email to get your personalized nutrition roadmap.</div>
+      <div class="input-wrap">
+        <label class="input-label">Email address *</label>
+        <input type="email" id="v2-email-input" placeholder="your@email.com">
+      </div>
+      <button class="next-btn" onclick="submitAndRedirect('v2')">Unlock My Assessment →</button>
+      <div class="trust-micro">HIPAA-compliant · Data never sold · 175,000+ members</div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="v2-loading" class="loading-screen hidden">
+      <div class="geno-logo-loading">GenoPalate</div>
+      <div class="dna-helix">
+        <div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div>
+      </div>
+      <div class="loading-pct" id="v2-load-pct">0%</div>
+      <div class="loading-bar-wrap"><div class="loading-bar-fill" id="v2-load-bar"></div></div>
+      <div class="loading-msg" id="v2-load-msg">Analyzing your health profile...</div>
+    </div>
+
+    <!-- RESULT: NUTRITION ASSESSMENT + REDIRECT -->
+    <div id="v2-result" class="result-screen hidden">
+      <div class="q-label">Your Nutrition Assessment</div>
+      <div class="result-headline" id="v2-result-headline">Your medication is doing its job. Now make sure your nutrition is doing the same.</div>
+      <div class="result-sub">Here's what your answers tell us about your nutrition profile.</div>
+
+      <!-- Profile Card (clinical tone) -->
+      <div class="profile-card clinical" id="v2-profile-card">
+        <div class="profile-card-label">Your Nutrition Assessment</div>
+        <div class="profile-type-row">
+          <div class="profile-type-emoji" id="v2-profile-emoji">🩺</div>
+          <div>
+            <div class="profile-type-name" id="v2-profile-name">Medical Support Profile</div>
+            <span class="profile-type-tag" id="v2-profile-tag">Profile Type: GLP-1 Support</span>
+          </div>
+        </div>
+        <div class="profile-body" id="v2-profile-body">Your 7-point assessment identifies a clear nutritional gap. GLP-1 medications suppress appetite — but without targeted nutrition, you risk losing muscle alongside fat. Your DNA tells us exactly what to protect.</div>
+      </div>
+
+      <!-- 3 Key Insights -->
+      <div class="insights-block">
+        <div class="insights-label">Clinical insights from your assessment</div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v2-insight-1">Because you are managing your health with medication, your DNA analysis specifically flags the macro ratios that support your protocol — not generic population averages.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v2-insight-2">Your dietary history pattern matches 73% of members who discovered their genetics required a fundamentally different approach than what they had been following.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v2-insight-3">Based on your support preference, GenoPalate's registered dietitian program is designed for exactly where you are — translating DNA data into a clinical-grade action plan.</span>
+        </div>
+      </div>
+
+      <!-- Matched Testimonial -->
+      <div class="testimonial-block" id="v2-testimonial">
+        <div class="star-row">★★★★★</div>
+        <div class="testimonial-text">"My doctor put me on Ozempic but had zero advice on what to eat. GenoPalate filled that gap completely. I know exactly what I should be eating to protect my muscle while losing weight."</div>
+        <div class="testimonial-author">— Sarah K., verified customer</div>
+      </div>
+
+      <!-- What Happens Next -->
+      <div class="next-steps">
+        <div class="next-steps-label">What happens next</div>
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title" id="v2-step1-title">Get your DNA results</div>
+            <div class="step-detail" id="v2-step1-detail">Upload existing 23andMe/Ancestry data for 24-hour results, or order a collection kit for results in 3–4 weeks.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Your registered dietitian reviews your genetic profile</div>
+            <div class="step-detail">A PhD-trained nutritionist cross-references your 100+ genetic markers with your health history to build your clinical nutrition roadmap.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title" id="v2-step3-title">You get a personalized plan + ongoing guidance</div>
+            <div class="step-detail" id="v2-step3-detail">Macro targets, food recommendations, and sensitivity insights specific to your genetics — reviewed and delivered by a registered dietitian.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main CTA -->
+      <div class="redirect-cta-wrap">
+        <a id="v2-redirect-cta" href="https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=kit_coaching" class="redirect-cta" target="_blank">See My Personalized Plan →</a>
+        <div class="redirect-cta-note">Recommended program based on your answers</div>
+      </div>
+
+      <!-- Trust bar -->
+      <div class="trust-bar">
+        <div class="trust-item">175,000+ members</div>
+        <div class="trust-item">PhD-founded</div>
+        <div class="trust-item">FSA/HSA eligible</div>
+        <div class="trust-item">HIPAA compliant</div>
+      </div>
+
+      <!-- Secondary link -->
+      <a id="v2-secondary-link" href="https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v2" class="secondary-link" target="_blank">Not sure yet? See all our programs →</a>
+
+      <!-- FAQ -->
+      <div class="pkg-faq" style="margin-top:24px">
+        <div class="pkg-faq-title">Common questions</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What if I don't have DNA data yet? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">No problem — GenoPalate sends you an at-home kit (simple cheek swab). Results in 3–4 weeks. Already have 23andMe or AncestryDNA data? Upload it for $50 less with 24-hour results.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Is my health data private? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Your data is never sold or shared. GenoPalate is HIPAA-compliant and CLIA/CAP certified. You own your data and can request deletion at any time.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Can this work alongside my medication? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Yes — GenoPalate's registered dietitians are trained to build nutrition plans that support, not interfere with, medical protocols including GLP-1 medications. Your DNA results include flags relevant to medication interactions.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Can I cancel the subscription? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Yes, anytime. No contract, no cancellation fees.</div>
+        </div>
+      </div>
+      <div class="section-divider"></div>
+      <button class="back-btn" style="justify-content:center;width:100%" onclick="v2Reset()">← Retake quiz</button>
+    </div>
+  </div>
+</div>
+<!-- Sticky redirect CTA (V2) -->
+<div class="sticky-cta-redirect" id="v2-sticky" style="display:none">
+  <div class="sticky-cta-redirect-inner">
+    <button class="sticky-cta-redirect-btn" id="v2-sticky-btn" onclick="v2StickyClick()">See My Personalized Plan →</button>
+  </div>
+</div>
+
+<!-- ==================== VARIANT 3: PERSONALITY PROFILE ==================== -->
+<div id="quiz-v3" class="quiz-section hidden">
+  <!-- WELCOME -->
+  <div id="v3-welcome" class="welcome" style="opacity:0;transform:translateY(20px);animation:fadeUp 0.6s 0.1s var(--ease) both">
+    <div class="welcome-badge">What's Your Nutrition Type?</div>
+    <h1>Discover Your <em>DNA Nutrition</em> Personality in 6 Questions</h1>
+    <p>Based on your answers, we'll reveal your unique nutrition type — and the plan that matches exactly how your body processes food.</p>
+    <div class="welcome-stats">
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Nutrition Types</div></div>
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Questions</div></div>
+      <div class="stat-item"><div class="stat-num">60s</div><div class="stat-label">to complete</div></div>
+    </div>
+    <button class="welcome-cta" onclick="v3Start()">Find My Nutrition Type →</button>
+    <div class="trust-line">Free · No credit card · Shareable results</div>
+  </div>
+
+  <!-- QUIZ FLOW -->
+  <div id="v3-flow" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="v3-step-label">Step 1 of 6</span><span id="v3-pct">17%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="v3-bar" style="width:17%"></div></div>
+    </div>
+    <button class="back-btn" id="v3-back" onclick="v3Back()">← Back</button>
+
+    <!-- Q1 -->
+    <div id="v3-q1" class="q-screen">
+      <div class="q-label">Question 1 — Your Foundation Signal</div>
+      <div class="q-text">Let's find your nutrition type. What drives your interest in nutrition?</div>
+      <div class="options" id="v3-q1-opts">
+        <button class="opt" onclick="v3Select('q1','perform',this)"><span class="opt-icon">🎯</span><span class="opt-text">I want to perform at my best</span></button>
+        <button class="opt" onclick="v3Select('q1','break_cycle',this)"><span class="opt-icon">🔄</span><span class="opt-text">I need to break a cycle of failed diets</span></button>
+        <button class="opt" onclick="v3Select('q1','food_problems',this)"><span class="opt-icon">🔍</span><span class="opt-text">I think certain foods are causing me problems</span></button>
+        <button class="opt" onclick="v3Select('q1','body_changed',this)"><span class="opt-icon">🦋</span><span class="opt-text">My body has changed and my old approach isn't working</span></button>
+        <button class="opt" onclick="v3Select('q1','fascinated',this)"><span class="opt-icon">🧬</span><span class="opt-text">I'm just fascinated by what my DNA can reveal</span></button>
+      </div>
+      <button class="next-btn" id="v3-q1-next" disabled onclick="v3Next(2)">Next →</button>
+    </div>
+
+    <!-- Q2 -->
+    <div id="v3-q2" class="q-screen hidden">
+      <div class="q-label">Question 2</div>
+      <div class="q-text">Do you have existing DNA data you'd like to put to work?</div>
+      <div class="options" id="v3-q2-opts">
+        <button class="opt" onclick="v3Select('q2','upload',this)"><span class="opt-icon">✅</span><span class="opt-text">Yes! My 23andMe/Ancestry data is just sitting there</span></button>
+        <button class="opt" onclick="v3Select('q2','no_dna',this)"><span class="opt-icon">🔬</span><span class="opt-text">No, but I'm excited to get tested</span></button>
+        <button class="opt" onclick="v3Select('q2','no_dna',this)"><span class="opt-icon">❓</span><span class="opt-text">What's involved in the DNA test?</span></button>
+      </div>
+      <button class="next-btn" id="v3-q2-next" disabled onclick="v3Next(3)">Next →</button>
+    </div>
+
+    <!-- Q3 -->
+    <div id="v3-q3" class="q-screen hidden">
+      <div class="q-label">Question 3</div>
+      <div class="q-text">When it comes to making nutrition changes, you are...</div>
+      <div class="options" id="v3-q3-opts">
+        <button class="opt" onclick="v3Select('q3','self_starter',this)"><span class="opt-icon">A</span><span class="opt-text"><strong>A self-starter.</strong> Give me the map and I'll navigate.</span></button>
+        <button class="opt" onclick="v3Select('q3','team_player',this)"><span class="opt-icon">B</span><span class="opt-text"><strong>A team player.</strong> I do better with a coach in my corner.</span></button>
+        <button class="opt" onclick="v3Select('q3','all_in',this)"><span class="opt-icon">C</span><span class="opt-text"><strong>All-in.</strong> I want the full guided experience.</span></button>
+      </div>
+      <button class="next-btn" id="v3-q3-next" disabled onclick="v3Next(4)">Next →</button>
+    </div>
+
+    <!-- Q4 -->
+    <div id="v3-q4" class="q-screen hidden">
+      <div class="q-label">Question 4 — Confirmation Signal</div>
+      <div class="q-text">Pick the statement that hits closest to home:</div>
+      <div class="options" id="v3-q4-opts">
+        <button class="opt" onclick="v3Select('q4','carbs_disagree',this)"><span class="opt-icon">A</span><span class="opt-text">I've been told to cut carbs but my body seems to disagree</span></button>
+        <button class="opt" onclick="v3Select('q4','guessing_supps',this)"><span class="opt-icon">B</span><span class="opt-text">I take supplements but honestly I'm guessing at what I need</span></button>
+        <button class="opt" onclick="v3Select('q4','mystery_symptoms',this)"><span class="opt-icon">C</span><span class="opt-text">Something I eat is causing bloating/fatigue/skin issues but I can't figure out what</span></button>
+        <button class="opt" onclick="v3Select('q4','hit_a_wall',this)"><span class="opt-icon">D</span><span class="opt-text">I eat well but I've hit a wall and can't break through</span></button>
+        <button class="opt" onclick="v3Select('q4','curious_learner',this)"><span class="opt-icon">E</span><span class="opt-text">I love learning new things about my body</span></button>
+      </div>
+      <button class="next-btn" id="v3-q4-next" disabled onclick="v3Next(5)">Next →</button>
+    </div>
+
+    <!-- Q5 multi-select -->
+    <div id="v3-q5" class="q-screen hidden">
+      <div class="q-label">Question 5</div>
+      <div class="q-text">Beyond food, which wellness areas matter most right now?</div>
+      <div class="multi-hint">Select up to 3</div>
+      <div class="options" id="v3-q5-opts">
+        <button class="opt" onclick="v3Multi(this,'energy')"><span class="opt-icon">✓</span><span class="opt-text">Energy and stamina</span></button>
+        <button class="opt" onclick="v3Multi(this,'sleep')"><span class="opt-icon">✓</span><span class="opt-text">Sleep quality</span></button>
+        <button class="opt" onclick="v3Multi(this,'stress')"><span class="opt-icon">✓</span><span class="opt-text">Stress management</span></button>
+        <button class="opt" onclick="v3Multi(this,'gut')"><span class="opt-icon">✓</span><span class="opt-text">Gut health</span></button>
+        <button class="opt" onclick="v3Multi(this,'weight')"><span class="opt-icon">✓</span><span class="opt-text">Weight management</span></button>
+        <button class="opt" onclick="v3Multi(this,'skin')"><span class="opt-icon">✓</span><span class="opt-text">Skin, hair, nails</span></button>
+        <button class="opt" onclick="v3Multi(this,'fitness')"><span class="opt-icon">✓</span><span class="opt-text">Fitness performance</span></button>
+        <button class="opt" onclick="v3Multi(this,'longevity')"><span class="opt-icon">✓</span><span class="opt-text">Longevity and disease prevention</span></button>
+      </div>
+      <button class="next-btn" id="v3-q5-next" onclick="v3Next('email')">Next →</button>
+    </div>
+
+    <!-- EMAIL + TYPE TEASER -->
+    <div id="v3-email" class="email-screen hidden">
+      <div class="q-label">We've identified your nutrition type...</div>
+      <div class="type-teaser-card">
+        <div class="type-badge-wrap" id="v3-type-badge" style="background:rgba(88,162,213,0.15)">
+          <span class="type-icon-big" id="v3-type-icon-preview">🧬</span>
+          <span class="type-name-blur" id="v3-type-name-blur">The Precision Fueler</span>
+        </div>
+        <div class="type-reveal-text">Enter your email to reveal your full nutrition type profile</div>
+      </div>
+      <div class="email-heading">Reveal Your Nutrition Type</div>
+      <div class="input-wrap">
+        <label class="input-label">Email address *</label>
+        <input type="email" id="v3-email-input" placeholder="your@email.com">
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">First name (optional)</label>
+        <input type="text" id="v3-name-input" placeholder="Your first name">
+      </div>
+      <button class="next-btn" onclick="submitAndRedirect('v3')">Reveal My Type →</button>
+      <div class="trust-micro">Plus: get a free nutrition type comparison guide to share with friends</div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="v3-loading" class="loading-screen hidden">
+      <div class="geno-logo-loading">GenoPalate</div>
+      <div class="dna-helix">
+        <div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div><div class="helix-dot"></div>
+      </div>
+      <div class="loading-pct" id="v3-load-pct">0%</div>
+      <div class="loading-bar-wrap"><div class="loading-bar-fill" id="v3-load-bar"></div></div>
+      <div class="loading-msg" id="v3-load-msg">Matching your nutrition type profile...</div>
+    </div>
+
+    <!-- RESULT: TYPE REVEAL + PROFILE + REDIRECT -->
+    <div id="v3-result" class="result-screen hidden">
+      <!-- Type card (V3 specific — keep) -->
+      <div class="type-reveal-card type-teal" id="v3-type-card">
+        <div class="type-emoji" id="v3-type-emoji">🎯</div>
+        <div class="type-label">Your Nutrition Type</div>
+        <div class="type-title" id="v3-type-title">The Precision Fueler</div>
+        <div class="type-desc" id="v3-type-desc">Data-driven optimizer. You fine-tune an already-good diet. Your DNA likely contains specific markers that respond to targeted macro adjustments most people never discover.</div>
+      </div>
+      <div class="type-insight" id="v3-type-insight">
+        <strong>Key Insight:</strong> Precision Fuelers often discover their DNA calls for a specific protein-to-carb ratio that standard macro calculators miss by 10–15%. That gap is where your results are hiding.
+      </div>
+      <div style="text-align:center;margin-bottom:20px">
+        <button onclick="alert('Share feature — would generate 1080×1080 card image for Instagram')" style="background:rgba(88,162,213,0.15);border:1px solid rgba(88,162,213,0.3);color:var(--white);padding:10px 20px;border-radius:8px;cursor:pointer;font-family:Outfit,sans-serif;font-size:13px;font-weight:600">Share My Type</button>
+      </div>
+
+      <!-- 3 Key Insights -->
+      <div class="insights-block">
+        <div class="insights-label">Key insights from your answers</div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v3-insight-1">Because you want to perform at your best, your DNA likely holds the specific macro ratio that standard tracking apps never surface — precision at the genetic level.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v3-insight-2">Your pattern matches 73% of Precision Fueler members who discovered a protein-to-carb ratio mismatch that was holding back their results for months.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-check">✓</span>
+          <span class="insight-text" id="v3-insight-3">Based on your DNA availability and support preference, GenoPalate has matched a specific program to your type — see it on the site.</span>
+        </div>
+      </div>
+
+      <!-- Matched Testimonial -->
+      <div class="testimonial-block" id="v3-testimonial">
+        <div class="star-row">★★★★★</div>
+        <div class="testimonial-text">"I was already tracking macros in MyFitnessPal. GenoPalate showed me my protein was 18% too low for my genetics. Three weeks later I broke through a 4-month plateau."</div>
+        <div class="testimonial-author">— David K., verified customer</div>
+      </div>
+
+      <!-- What Happens Next -->
+      <div class="next-steps">
+        <div class="next-steps-label">What happens next</div>
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title" id="v3-step1-title">Get your DNA results</div>
+            <div class="step-detail" id="v3-step1-detail">Upload existing 23andMe/Ancestry data for results in 24 hours, or order an at-home collection kit for results in 3–4 weeks.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Your registered dietitian reviews your genetic profile</div>
+            <div class="step-detail">A PhD-trained nutritionist analyzes your 100+ genetic markers and builds a plan matched to your nutrition type.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title" id="v3-step3-title">You get a personalized plan matched to your type</div>
+            <div class="step-detail" id="v3-step3-detail">140+ specific food recommendations, precise macro targets, and 23 nutrient insights — calibrated for your nutrition type and your unique genetics.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main CTA -->
+      <div class="redirect-cta-wrap">
+        <a id="v3-redirect-cta" href="https://genopalate.com/products/dna-upload?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=upload_report" class="redirect-cta" target="_blank">See My Personalized Plan →</a>
+        <div class="redirect-cta-note">Recommended program based on your answers</div>
+      </div>
+
+      <!-- Trust bar -->
+      <div class="trust-bar">
+        <div class="trust-item">175,000+ members</div>
+        <div class="trust-item">PhD-founded</div>
+        <div class="trust-item">FSA/HSA eligible</div>
+        <div class="trust-item">24hr results (with upload)</div>
+      </div>
+
+      <!-- Secondary link -->
+      <a id="v3-secondary-link" href="https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v3" class="secondary-link" target="_blank">Not sure yet? See all our programs →</a>
+
+      <!-- All 5 types (collapsible — kept for V3) -->
+      <details class="all-types" style="margin-top:20px;margin-bottom:4px">
+        <summary>How do the 5 nutrition types compare? ↓</summary>
+        <div class="types-grid">
+          <div class="type-mini"><div class="type-mini-emoji">🎯</div><div class="type-mini-name">The Precision Fueler</div><div class="type-mini-desc">Fine-tunes an already-good diet</div></div>
+          <div class="type-mini"><div class="type-mini-emoji">🔄</div><div class="type-mini-name">The Reset Seeker</div><div class="type-mini-desc">Science-based reset after diet failures</div></div>
+          <div class="type-mini"><div class="type-mini-emoji">🔍</div><div class="type-mini-name">The Sensitivity Sleuth</div><div class="type-mini-desc">Hunting the hidden problem food</div></div>
+          <div class="type-mini"><div class="type-mini-emoji">🦋</div><div class="type-mini-name">The Body Recalibrator</div><div class="type-mini-desc">Nutrition for who you are NOW</div></div>
+          <div class="type-mini" style="grid-column:span 2"><div class="type-mini-emoji">🧬</div><div class="type-mini-name">The Curious Explorer</div><div class="type-mini-desc">In it for the discovery</div></div>
+        </div>
+      </details>
+
+      <!-- FAQ -->
+      <div class="pkg-faq" style="margin-top:24px">
+        <div class="pkg-faq-title">Common questions</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What if I don't have DNA data yet? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">GenoPalate sends you an at-home kit (simple cheek swab). Results in 3–4 weeks. Already have 23andMe or AncestryDNA data? Upload it for $50 less with 24-hour results.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Is my DNA data private? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Your data is never sold or shared. GenoPalate is HIPAA-compliant and CLIA/CAP certified. You own your data and can request deletion at any time.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How accurate is the nutrition type quiz? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">The quiz identifies your type based on behavioral and genetic signals — it's directional, not diagnostic. Your actual DNA test (100+ markers) delivers the full precision picture.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Can I cancel if I choose a subscription? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a">Yes, anytime. No contract, no cancellation fees.</div>
+        </div>
+      </div>
+      <div class="section-divider"></div>
+      <button class="back-btn" style="justify-content:center;width:100%" onclick="v3Reset()">← Retake quiz</button>
+    </div>
+  </div>
+</div>
+<!-- Sticky redirect CTA (V3) -->
+<div class="sticky-cta-redirect" id="v3-sticky" style="display:none">
+  <div class="sticky-cta-redirect-inner">
+    <button class="sticky-cta-redirect-btn" id="v3-sticky-btn" onclick="v3StickyClick()">See My Personalized Plan →</button>
+  </div>
+</div>
+
+<script>
+// ===================== VARIANT 1 =====================
+const v1State={q1:null,q2:null,q3:null,q4:null,step:0};
+const v1Steps=['welcome','q1','q2','q3','q4','email','loading','result'];
+
+function v1Start(){
+  document.getElementById('v1-welcome').classList.add('hidden');
+  document.getElementById('v1-flow').classList.remove('hidden');
+  v1State.step=1;v1ShowStep('q1');
+}
+function v1ShowStep(s){
+  const screens=['q1','q2','q3','q4','email','loading','result'];
+  screens.forEach(x=>{const el=document.getElementById('v1-'+x);if(el)el.classList.add('hidden');});
+  const el=document.getElementById('v1-'+s);
+  if(el){el.classList.remove('hidden');el.style.animation='none';el.offsetHeight;el.style.animation='';}
+  const stepMap={q1:1,q2:2,q3:3,q4:4,email:5,loading:6,result:7};
+  const n=stepMap[s]||1;
+  const total=5;
+  const pct=Math.min(100,Math.round((n/total)*100));
+  document.getElementById('v1-step-label').textContent=n<=5?`Step ${n} of 5`:'';
+  document.getElementById('v1-pct').textContent=n<=5?`${pct}%`:'';
+  document.getElementById('v1-bar').style.width=(n<=5?pct:100)+'%';
+  document.getElementById('v1-back').style.display=(n<=1||s==='loading'||s==='result')?'none':'flex';
+}
+function v1Select(q,val,el){
+  v1State[q]=val;
+  document.querySelectorAll(`#v1-${q}-opts .opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(`v1-${q}-next`).disabled=false;
+}
+function v1Next(to){
+  if(to==='email'){v1BuildTeaser();v1ShowStep('email');}
+  else if(to==='loading'){v1ShowStep('loading');v1RunLoading('v1',()=>{v1BuildResult();v1ShowStep('result');});}
+  else{v1ShowStep('q'+to);}
+}
+function v1Back(){
+  const screens=['q1','q2','q3','q4','email'];
+  let cur=-1;
+  screens.forEach((s,i)=>{if(!document.getElementById('v1-'+s).classList.contains('hidden'))cur=i;});
+  if(cur>0)v1ShowStep(screens[cur-1]);
+  else{document.getElementById('v1-flow').classList.add('hidden');document.getElementById('v1-welcome').classList.remove('hidden');}
+}
+function v1Reset(){
+  Object.keys(v1State).forEach(k=>v1State[k]=null);
+  v1State.step=0;
+  document.querySelectorAll('#quiz-v1 .opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('#quiz-v1 .next-btn').forEach(b=>{if(b.id!=='v1-q2-next'&&b.id!=='v1-q3-next')b.disabled=true;});
+  document.getElementById('v1-flow').classList.add('hidden');
+  document.getElementById('v1-welcome').classList.remove('hidden');
+  document.getElementById('v1-sticky').style.display='none';
+}
+function v1BuildTeaser(){
+  const f=v1State.q1;const s=v1State.q4;
+  const headlines={
+    weight_management:{keto_revelation:"Your DNA may explain why low-carb diets keep failing you.",body_changed:"Your body has changed — and your nutrition needs to change with it.",plateau_breaker:"You're not broken. You're just eating for someone else's body.",sensitivity_discovery:"Your food reactions may have a genetic explanation."},
+    optimization:{plateau_breaker:"You're closer than you think. Your DNA reveals the specific tweaks.",keto_revelation:"The diet that 'should' work may be working against your genetics.",sensitivity_discovery:"The foods you're reacting to may be coded in your DNA."},
+    medical:{body_changed:"Your body is going through real changes. Here's the plan for where you are NOW.",sensitivity_discovery:"Your genes may explain why certain foods are causing problems.",keto_revelation:"Your DNA knows which nutrition approach works with your condition."},
+    supplements:{keto_revelation:"You might be spending money on supplements your body doesn't need.",sensitivity_discovery:"Your supplement needs are written in your DNA — stop guessing.",body_changed:"Your nutritional needs have shifted. Your DNA knows what's missing."},
+    curiosity:{default:"Your DNA has a nutrition story to tell. Unlock your personalized food blueprint."}
+  };
+  let h=headlines[f]?.[s]||headlines[f]?.default||headlines.curiosity.default;
+  document.getElementById('v1-teaser-text').textContent=h;
+}
+function v1BuildResult(){
+  const f=v1State.q1;const story=v1State.q4;const dna=v1State.q2;const guide=v1State.q3;
+  const headlineMap={
+    weight_management:{keto_revelation:"Your DNA may explain why low-carb diets keep failing you.",body_changed:"Your body has changed — and your nutrition needs to change with it.",plateau_breaker:"You're not broken. You're just eating for someone else's body.",sensitivity_discovery:"Your genes may reveal why certain foods are causing problems."},
+    optimization:{plateau_breaker:"You're closer than you think. Your DNA reveals the specific tweaks that break plateaus.",keto_revelation:"The diet that 'should' work for you might be working against your genetics.",sensitivity_discovery:"Your food reactions are pointing to something genetic."},
+    medical:{body_changed:"Your body is going through real changes. Here's the plan designed for where you are NOW.",sensitivity_discovery:"Your genes may reveal why certain foods are causing you problems.",keto_revelation:"Your DNA knows which nutrition approach works with your health condition."},
+    supplements:{keto_revelation:"You might be spending money on supplements your body doesn't need.",sensitivity_discovery:"Your DNA tells you exactly which supplements you need — and which ones to stop buying.",body_changed:"Your supplement needs have shifted with your body."},
+    curiosity:{default:"Your DNA has a nutrition story to tell. Unlock your personalized food blueprint."}
+  };
+  const h=headlineMap[f]?.[story]||headlineMap[f]?.default||headlineMap.curiosity.default;
+  document.getElementById('v1-result-headline').textContent=h;
+
+  // Profile card dynamic content
+  const isUpload=dna==='upload_path';
+  const profileEmojis={weight_management:'⚖️',optimization:'🎯',medical:'🏥',supplements:'💊',curiosity:'🧬'};
+  const profileNames={weight_management:'Weight Management Profile',optimization:'Performance Optimization Profile',medical:'Health Condition Support Profile',supplements:'Supplement Optimization Profile',curiosity:'DNA Discovery Profile'};
+  const profileTags={weight_management:'Based on your diet history',optimization:'Based on your goals',medical:'Based on your health context',supplements:'Based on your supplement concerns',curiosity:'Based on your curiosity'};
+  const profileBodies={
+    weight_management:{keto_revelation:'Your answers show a repeated pattern with carb-restriction diets. Your DNA analysis will likely reveal whether your body actually requires fewer carbs — or significantly more than generic advice prescribes.',body_changed:'Your body composition is shifting. What worked nutritionally at one life stage often stops working as hormones, metabolism, and activity patterns change. Your DNA profile will map exactly what your body needs right now.',plateau_breaker:"You're doing the right things but not seeing results. This is almost always a personalization mismatch — your macro targets are set for a different genetic profile. Your DNA reveals the correct targets for your body.",sensitivity_discovery:'Your symptoms around specific foods suggest a genetic sensitivity. GenoPalate tests for 4 specific markers — gluten, lactose, caffeine, and Vitamin D metabolism — that explain most food-reaction patterns.'},
+    curiosity:{default:'Your curiosity is the best starting point. GenoPalate analyzes 100+ genetic markers and translates them into 140+ specific food recommendations and 23 nutrient targets tailored to exactly how your body processes food.'}
+  };
+  const emoji=profileEmojis[f]||'🧬';
+  const name=profileNames[f]||'Personalized DNA Nutrition Plan';
+  const tag=profileTags[f]||'Based on your answers';
+  const bodyMap=profileBodies[f]||profileBodies.curiosity;
+  const body=bodyMap[story]||bodyMap.default||profileBodies.curiosity.default;
+  document.getElementById('v1-profile-emoji').textContent=emoji;
+  document.getElementById('v1-profile-name').textContent=name;
+  document.getElementById('v1-profile-tag').textContent=tag;
+  document.getElementById('v1-profile-body').textContent=body;
+
+  // 3 key insights
+  const insightMap={
+    weight_management:{
+      keto_revelation:["Because you've tried low-carb and it hasn't worked, your DNA likely carries a carbohydrate metabolism variant — meaning standard keto advice may be actively working against your genetics.","Your pattern matches 73% of members who discovered their optimal carb intake was significantly higher than the diets they were following.","Based on your guidance preference, GenoPalate has matched the right level of support for your profile — see the full plan on their site."],
+      plateau_breaker:["Because you're doing everything right but not seeing results, your DNA almost certainly contains a macro ratio mismatch — a protein or fat target that's off by 15–20% from where your genetics want it.","Your plateau pattern matches 73% of members who broke through within 30 days of eating to their DNA-specific targets.","Based on your preferred approach, your matched program will show you exactly which variables to adjust."],
+      body_changed:["Because your body has changed, your nutritional requirements have shifted — this is genetic biology, not willpower. Your DNA tells you what your body needs in its current state.","73% of members navigating body changes see their first real improvement within 6 weeks of eating to their DNA profile.","Your selected support level is matched to a program designed for exactly where you are right now."],
+      sensitivity_discovery:["Because you have unexplained reactions to food, your DNA likely contains a sensitivity marker. GenoPalate tests 4 specific variants — gluten, lactose, caffeine, and Vitamin D metabolism.","89% of members with your sensitivity profile identify their trigger food within the first report.","Based on your preference, your matched program walks you through exactly what to do with the information."]
+    },
+    curiosity:{default:["Because you're curious about what your DNA says, your report will deliver 100+ genetic markers translated into plain-language nutrition guidance — no science degree required.","Your curiosity profile matches members who frequently discover at least one surprising genetic pattern that explains a lifelong food experience.","Your selected program gives you exactly the depth of exploration you're looking for."]}
+  };
+  const insights=insightMap[f]?.[story]||insightMap.curiosity.default;
+  document.getElementById('v1-insight-1').textContent=insights[0];
+  document.getElementById('v1-insight-2').textContent=insights[1];
+  document.getElementById('v1-insight-3').textContent=insights[2];
+
+  // Step 1 detail based on DNA path
+  if(isUpload){
+    document.getElementById('v1-step1-title').textContent='Upload your existing DNA data';
+    document.getElementById('v1-step1-detail').textContent='You already have 23andMe or Ancestry data — upload it at GenoPalate.com for results in 24 hours.';
+  } else {
+    document.getElementById('v1-step1-title').textContent='Order your DNA collection kit';
+    document.getElementById('v1-step1-detail').textContent='A simple cheek swab kit ships to your door. Results in 3–4 weeks after receipt. No doctor visit needed.';
+  }
+
+  // Step 3 detail based on guidance level
+  const step3Map={
+    report_only:'140+ personalized food recommendations and your exact macro targets — delivered as a clear, actionable report you implement yourself.',
+    coaching:'140+ food recommendations plus monthly 1:1 sessions with a Registered Dietitian who translates your DNA data into an evolving action plan.',
+    premium:'The full picture: DNA analysis, blood biomarker testing, personalized supplement formulation, and dedicated coaching — nothing left to guesswork.'
+  };
+  const guideKey=guide||'coaching';
+  document.getElementById('v1-step3-detail').textContent=step3Map[guideKey]||step3Map.coaching;
+
+  // Build UTM URL
+  const hasDna=isUpload?'yes':'no';
+  const urlMap={
+    'yes_report_only':'https://genopalate.com/products/dna-upload?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=upload_report',
+    'yes_coaching':'https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=upload_coaching',
+    'yes_premium':'https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=upload_premium',
+    'no_report_only':'https://genopalate.com/products/dna-kit?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=kit_report',
+    'no_coaching':'https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=kit_coaching',
+    'no_premium':'https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v1&utm_campaign=personalized&quiz_rec=kit_premium'
+  };
+  const urlKey=`${hasDna}_${guideKey}`;
+  const baseUrl=urlMap[urlKey]||urlMap['no_coaching'];
+  const fullUrl=`${baseUrl}&q1=${f||''}&q4=${story||''}&guidance=${guideKey}`;
+  console.log('[V1 Result CTA URL]', fullUrl);
+  document.getElementById('v1-redirect-cta').href=fullUrl;
+  document.getElementById('v1-secondary-link').href=`https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v1&q1=${f||''}`;
+
+  // Sticky CTA
+  document.getElementById('v1-sticky').style.display='block';
+
+  // Testimonial by story
+  const tMap={
+    keto_revelation:{text:'"I was told for years to go low-carb. GenoPalate showed me my DNA actually needs higher carbs. Lost 14 lbs in 6 weeks eating more carbs than I had in years."',auth:'— Terri M., verified customer'},
+    body_changed:{text:'"I went keto like everyone said and felt terrible. My GenoPalate report explained exactly why — my body is genetically wired for a balanced diet. Life-changing."',auth:'— Susan P., verified customer'},
+    plateau_breaker:{text:'"I was doing everything right but had been stuck for 8 months. My DNA report showed I needed to increase my protein by 20%. Plateau broken in 3 weeks."',auth:'— James R., verified customer'},
+    sensitivity_discovery:{text:'"I found out I have a genetic gluten sensitivity that explained years of bloating. I had no idea. GenoPalate changed my life."',auth:'— Maria L., verified customer'}
+  };
+  const t=tMap[story]||tMap.plateau_breaker;
+  document.getElementById('v1-testimonial').innerHTML=`<div class="star-row">★★★★★</div><div class="testimonial-text">${t.text}</div><div class="testimonial-author">${t.auth}</div>`;
+}
+
+// ===================== VARIANT 2 =====================
+const v2State={q1:null,q2:[],q3:null,q4:null,q5:null,q6:null};
+const v2Screens=['q1','q2','interstitial','q3','q4','q5','q6','email','loading','result'];
+
+function v2Start(){
+  document.getElementById('v2-welcome').classList.add('hidden');
+  document.getElementById('v2-flow').classList.remove('hidden');
+  v2ShowStep('q1');
+}
+function v2ShowStep(s){
+  const all=['q1','q2','interstitial','q3','q4','q5','q6','email','loading','result'];
+  all.forEach(x=>{const el=document.getElementById('v2-'+x);if(el)el.classList.add('hidden');});
+  const el=document.getElementById('v2-'+s);
+  if(el){el.classList.remove('hidden');el.style.animation='none';el.offsetHeight;el.style.animation='';}
+  const stepMap={q1:1,q2:2,interstitial:2.5,q3:3,q4:4,q5:5,q6:6,email:7};
+  const n=stepMap[s]||1;const total=7;
+  const display=Math.min(7,Math.ceil(n));
+  const pct=Math.min(100,Math.round((display/total)*100));
+  document.getElementById('v2-step-label').textContent=display<=7?`Step ${display} of 7`:'';
+  document.getElementById('v2-pct').textContent=display<=7?`${pct}%`:'';
+  document.getElementById('v2-bar').style.width=(display<=7?pct:100)+'%';
+  document.getElementById('v2-back').style.display=(s==='q1'||s==='loading'||s==='result')?'none':'flex';
+}
+function v2Select(q,val,el){
+  v2State[q]=val;
+  document.querySelectorAll(`#v2-${q}-opts .opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(`v2-${q}-next`).disabled=false;
+}
+function v2Multi(el,val){
+  el.classList.toggle('selected');
+}
+function v2Next(to){
+  if(to==='interstitial'){
+    v2ShowStep('interstitial');
+    let t=3;
+    const btn=document.getElementById('v2-int-btn');
+    const iv=setInterval(()=>{
+      t--;btn.textContent=`Continue (auto in ${t}s)`;
+      if(t<=0){clearInterval(iv);v2Next(3);}
+    },1000);
+    document.getElementById('v2-int-fill').style.animation='none';
+    void document.getElementById('v2-int-fill').offsetHeight;
+    document.getElementById('v2-int-fill').style.animation='intFill 3s var(--ease) forwards';
+  } else if(to==='email'){
+    v2BuildTypeBlur();v2ShowStep('email');
+  } else if(to==='loading'){
+    v2ShowStep('loading');v2RunLoading('v2',()=>{v2BuildResult();v2ShowStep('result');});
+  } else {
+    v2ShowStep('q'+to);
+  }
+}
+function v2Back(){
+  const screens=['q1','q2','q3','q4','q5','q6','email'];
+  let cur=-1;
+  screens.forEach((s,i)=>{const el=document.getElementById('v2-'+s);if(el&&!el.classList.contains('hidden'))cur=i;});
+  if(cur>0)v2ShowStep(screens[cur-1]);
+  else{document.getElementById('v2-flow').classList.add('hidden');document.getElementById('v2-welcome').classList.remove('hidden');}
+}
+function v2Reset(){
+  Object.assign(v2State,{q1:null,q2:[],q3:null,q4:null,q5:null,q6:null});
+  document.querySelectorAll('#quiz-v2 .opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('#quiz-v2 select,.next-btn').forEach(b=>{if(b.classList&&b.classList.contains('next-btn')&&b.id&&b.id.includes('next')&&!b.id.includes('q2')&&!b.id.includes('q6'))b.disabled=true;});
+  ['q1','q3','q4','q5','q6'].forEach(q=>{const nb=document.getElementById(`v2-${q}-next`);if(nb)nb.disabled=true;});
+  document.getElementById('v2-flow').classList.add('hidden');
+  document.getElementById('v2-welcome').classList.remove('hidden');
+  document.getElementById('v2-sticky').style.display='none';
+}
+function v2BuildTypeBlur(){
+  const typeMap={
+    glp1:'Medical Support Profile',weight_loss:'Metabolic Reset Candidate',body_changing:'Hormonal Transition Profile',optimize:'Optimization Profile',health_concerns:'Sensitivity-Driven Profile',curiosity:'Exploration Profile'
+  };
+  document.getElementById('v2-type-blur').textContent=typeMap[v2State.q1]||'Personalized Nutrition Profile';
+}
+function v2BuildResult(){
+  const intent=v2State.q1;const concern=v2State.q4;const dna=v2State.q3;const guide=v2State.q6;
+  const hMap={
+    glp1:"Your medication is doing its job. Now make sure your nutrition is doing the same.",
+    weight_loss:"You've tried enough. It's time for a plan built on your actual DNA.",
+    body_changing:"Your body changed. Your nutrition should too.",
+    optimize:"You already eat well. GenoPalate tells you if it's right for YOUR specific genetics.",
+    health_concerns:"Your nutritional needs have a genetic component your current plan isn't addressing.",
+    curiosity:"100+ genetic markers. 140 specific food recommendations. 23 nutrient targets. This is precision nutrition."
+  };
+  document.getElementById('v2-result-headline').textContent=hMap[intent]||hMap.curiosity;
+
+  const isUpload=dna==='upload';
+
+  // Profile card
+  const profileEmojis={glp1:'🩺',weight_loss:'⚖️',body_changing:'🦋',optimize:'🎯',health_concerns:'🔍',curiosity:'🧬'};
+  const profileNames={glp1:'Medical Support Profile',weight_loss:'Metabolic Reset Candidate',body_changing:'Hormonal Transition Profile',optimize:'Optimization Profile',health_concerns:'Sensitivity-Driven Profile',curiosity:'Exploration Profile'};
+  const profileTags={glp1:'Profile Type: GLP-1 Support',weight_loss:'Profile Type: Metabolic Reset',body_changing:'Profile Type: Hormonal Transition',optimize:'Profile Type: Performance Optimization',health_concerns:'Profile Type: Sensitivity Analysis',curiosity:'Profile Type: DNA Exploration'};
+  const profileBodies={
+    glp1:'GLP-1 medications suppress appetite — but without targeted nutrition, you risk losing muscle alongside fat, and plateauing faster. Your DNA analysis maps exactly which macros to protect and which foods to prioritize during your protocol.',
+    weight_loss:'Your assessment shows a history of approaches that worked short-term but not long-term. This is almost always a personalization problem. Your DNA tells you the exact macro profile your genetics are built for — not a population average.',
+    body_changing:"Your body is in hormonal transition. What worked nutritionally at one life stage often stops working when hormones, metabolism, and body composition shift. Your DNA profile maps what your body needs right now — not what it needed 10 years ago.",
+    optimize:"You already eat well and track progress. GenoPalate identifies the specific genetic variants that affect how your body processes macros, vitamins, and key nutrients — the 10–15% gap that tracking apps can't see.",
+    health_concerns:"Your symptoms and health history suggest a genetic component to how your body responds to specific nutrients. Your DNA analysis tests 100+ markers and flags the ones most relevant to your specific health concerns.",
+    curiosity:"Your curiosity is the best starting point. GenoPalate translates 100+ genetic markers into 140+ specific food recommendations and 23 nutrient targets — in plain language, reviewed by a registered dietitian."
+  };
+  document.getElementById('v2-profile-emoji').textContent=profileEmojis[intent]||'🧬';
+  document.getElementById('v2-profile-name').textContent=profileNames[intent]||'Personalized Nutrition Profile';
+  document.getElementById('v2-profile-tag').textContent=profileTags[intent]||'Based on your assessment';
+  document.getElementById('v2-profile-body').textContent=profileBodies[intent]||profileBodies.curiosity;
+
+  // 3 key insights
+  const insightMap={
+    glp1:["Because you are on GLP-1 medication, your DNA analysis specifically prioritizes muscle-protective macro targets and identifies which foods support your protocol rather than working against it.","Your medication + nutrition gap pattern matches 73% of GLP-1 members who saw significantly better outcomes once nutrition was aligned with their genetics.","Based on your support preference, a Registered Dietitian will review your genetic results and build a plan around your specific medication protocol."],
+    weight_loss:["Because you've tried multiple approaches without lasting results, your DNA likely contains a macro mismatch — meaning you've been eating for a body type that isn't yours.","Your diet history pattern matches 73% of weight loss members who finally saw lasting results once they stopped following generic diets and started eating to their DNA.","Based on your support preference, your matched program gives you the accountability layer that makes DNA-guided nutrition sustainable long-term."],
+    body_changing:["Because your body is changing, your nutritional requirements have shifted — hormonally, metabolically, and in terms of protein needs. Your DNA profile maps what your body needs in its current state.","73% of members navigating hormonal transitions see measurable improvement within 6 weeks of eating to their updated genetic profile.","Based on your support level, a registered dietitian will adjust your plan monthly as your body continues to change."],
+    optimize:["Because you already eat well, your gains are likely hidden in a 10–15% precision gap — a macro ratio or nutrient target that generic apps can't calculate from behavior alone.","Your optimization profile matches 73% of members who discovered a protein or micronutrient target that was off from what their genetics actually require.","Based on your self-directed preference, your report delivers the exact data points you need to make targeted adjustments yourself."],
+    curiosity:["Because you're driven by curiosity, your report will uncover at least one surprising genetic pattern — most Curious Explorers discover something that explains a lifelong food experience.","Your exploration profile matches members who turn initial curiosity into significant lifestyle improvements after seeing what their DNA actually says.","Based on your preferred depth of engagement, GenoPalate has a matched program waiting for you."]
+  };
+  const insights=insightMap[intent]||insightMap.curiosity;
+  document.getElementById('v2-insight-1').textContent=insights[0];
+  document.getElementById('v2-insight-2').textContent=insights[1];
+  document.getElementById('v2-insight-3').textContent=insights[2];
+
+  // Step 1 based on DNA path
+  if(isUpload){
+    document.getElementById('v2-step1-title').textContent='Upload your existing DNA data';
+    document.getElementById('v2-step1-detail').textContent='You already have 23andMe or Ancestry data — upload it at GenoPalate.com for results in 24 hours.';
+  } else {
+    document.getElementById('v2-step1-title').textContent='Order your DNA collection kit';
+    document.getElementById('v2-step1-detail').textContent='A simple cheek swab kit ships to your door. Results in 3–4 weeks. No doctor visit needed.';
+  }
+
+  // Step 3 based on guidance level
+  let guideKey=guide||'coaching';
+  if(intent==='glp1'||intent==='body_changing'){guideKey='coaching';}
+  const step3Map={
+    solo:'Your DNA report is reviewed by a registered dietitian, then delivered as a comprehensive, self-implemented action plan.',
+    coaching:'Monthly 1:1 sessions with a Registered Dietitian who translates your DNA results into a clinical-grade, evolving nutrition plan.',
+    full:'The complete clinical protocol: DNA analysis, blood biomarker testing, personalized supplement formulation, and dedicated coaching.'
+  };
+  document.getElementById('v2-step3-detail').textContent=step3Map[guideKey]||step3Map.coaching;
+
+  // Build UTM URL
+  const hasDna=isUpload?'yes':'no';
+  // V2 guidance mapping: solo=report_only, coaching=coaching, full=premium
+  const guideUrlMap={solo:'report_only',coaching:'coaching',full:'premium'};
+  const guideUrlKey=guideUrlMap[guideKey]||'coaching';
+  const urlMap={
+    'yes_report_only':'https://genopalate.com/products/dna-upload?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=upload_report',
+    'yes_coaching':'https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=upload_coaching',
+    'yes_premium':'https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=upload_premium',
+    'no_report_only':'https://genopalate.com/products/dna-kit?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=kit_report',
+    'no_coaching':'https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=kit_coaching',
+    'no_premium':'https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v2&utm_campaign=personalized&quiz_rec=kit_premium'
+  };
+  const urlKey=`${hasDna}_${guideUrlKey}`;
+  const baseUrl=urlMap[urlKey]||urlMap['no_coaching'];
+  const fullUrl=`${baseUrl}&q1=${intent||''}&q4=${concern||''}&guidance=${guideUrlKey}`;
+  console.log('[V2 Result CTA URL]', fullUrl);
+  document.getElementById('v2-redirect-cta').href=fullUrl;
+  document.getElementById('v2-secondary-link').href=`https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v2&q1=${intent||''}`;
+  document.getElementById('v2-sticky').style.display='block';
+
+  // Testimonial by intent
+  const tMap={
+    glp1:{text:'"My doctor put me on Ozempic but had zero advice on what to eat. GenoPalate filled that gap completely. I know exactly what I should be eating to protect my muscle while losing weight."',auth:'— Sarah K., verified customer'},
+    weight_loss:{text:'"I tried keto, Noom, and a nutritionist. Nothing lasted. GenoPalate showed me my DNA was working against every plan I tried. 18 months later, the weight is still off."',auth:'— Rebecca M., verified customer'},
+    body_changing:{text:'"What worked for me at 38 stopped working at 48. GenoPalate explained exactly why and gave me a new roadmap. I feel better than I did 10 years ago."',auth:'— Linda M., verified customer'},
+    optimize:{text:'"I was already tracking macros in MyFitnessPal. GenoPalate showed me my protein was 18% too low for my genetics. Three weeks later I broke through a 4-month plateau."',auth:'— David K., verified customer'},
+    health_concerns:{text:'"My doctor suggested I look into nutrigenomics. GenoPalate was the only thing that gave me concrete, science-backed answers about what to eat for my specific condition."',auth:'— James W., verified customer'}
+  };
+  const t=tMap[intent]||tMap.optimize;
+  document.getElementById('v2-testimonial').innerHTML=`<div class="star-row">★★★★★</div><div class="testimonial-text">${t.text}</div><div class="testimonial-author">${t.auth}</div>`;
+}
+
+// ===================== VARIANT 3 =====================
+const v3State={q1:null,q2:null,q3:null,q4:null,q5:[],assignedType:null};
+
+function v3Start(){
+  document.getElementById('v3-welcome').classList.add('hidden');
+  document.getElementById('v3-flow').classList.remove('hidden');
+  v3ShowStep('q1');
+}
+function v3ShowStep(s){
+  const all=['q1','q2','q3','q4','q5','email','loading','result'];
+  all.forEach(x=>{const el=document.getElementById('v3-'+x);if(el)el.classList.add('hidden');});
+  const el=document.getElementById('v3-'+s);
+  if(el){el.classList.remove('hidden');el.style.animation='none';el.offsetHeight;el.style.animation='';}
+  const stepMap={q1:1,q2:2,q3:3,q4:4,q5:5,email:6};
+  const n=stepMap[s]||1;const total=6;
+  const pct=Math.min(100,Math.round((n/total)*100));
+  document.getElementById('v3-step-label').textContent=n<=6?`Step ${n} of 6`:'';
+  document.getElementById('v3-pct').textContent=n<=6?`${pct}%`:'';
+  document.getElementById('v3-bar').style.width=(n<=6?pct:100)+'%';
+  document.getElementById('v3-back').style.display=(s==='q1'||s==='loading'||s==='result')?'none':'flex';
+}
+function v3Select(q,val,el){
+  v3State[q]=val;
+  document.querySelectorAll(`#v3-${q}-opts .opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(`v3-${q}-next`).disabled=false;
+}
+function v3Multi(el,val){
+  const selected=document.querySelectorAll('#v3-q5-opts .opt.selected');
+  if(el.classList.contains('selected')){el.classList.remove('selected');}
+  else if(selected.length<3){el.classList.add('selected');}
+}
+function v3Next(to){
+  if(to==='email'){v3AssignType();v3ShowStep('email');}
+  else if(to==='loading'){v3ShowStep('loading');v3RunLoading('v3',()=>{v3BuildResult();v3ShowStep('result');});}
+  else{v3ShowStep('q'+to);}
+}
+function v3Back(){
+  const screens=['q1','q2','q3','q4','q5','email'];
+  let cur=-1;
+  screens.forEach((s,i)=>{const el=document.getElementById('v3-'+s);if(el&&!el.classList.contains('hidden'))cur=i;});
+  if(cur>0)v3ShowStep(screens[cur-1]);
+  else{document.getElementById('v3-flow').classList.add('hidden');document.getElementById('v3-welcome').classList.remove('hidden');}
+}
+function v3Reset(){
+  Object.assign(v3State,{q1:null,q2:null,q3:null,q4:null,q5:[],assignedType:null});
+  document.querySelectorAll('#quiz-v3 .opt').forEach(o=>o.classList.remove('selected'));
+  ['q1','q2','q3','q4'].forEach(q=>{const nb=document.getElementById(`v3-${q}-next`);if(nb)nb.disabled=true;});
+  document.getElementById('v3-flow').classList.add('hidden');
+  document.getElementById('v3-welcome').classList.remove('hidden');
+  document.getElementById('v3-sticky').style.display='none';
+}
+function v3AssignType(){
+  const p=v3State.q1,s=v3State.q4;
+  let type;
+  if(p==='perform'&&s==='mystery_symptoms')type='sensitivity_sleuth';
+  else if(p==='break_cycle'&&s==='mystery_symptoms')type='sensitivity_sleuth';
+  else if(p==='perform')type='precision_fueler';
+  else if(p==='break_cycle')type='reset_seeker';
+  else if(p==='food_problems')type='sensitivity_sleuth';
+  else if(p==='body_changed')type='body_recalibrator';
+  else type='curious_explorer';
+  v3State.assignedType=type;
+  const icons={precision_fueler:'🎯',reset_seeker:'🔄',sensitivity_sleuth:'🔍',body_recalibrator:'🦋',curious_explorer:'🧬'};
+  const names={precision_fueler:'The Precision Fueler',reset_seeker:'The Reset Seeker',sensitivity_sleuth:'The Sensitivity Sleuth',body_recalibrator:'The Body Recalibrator',curious_explorer:'The Curious Explorer'};
+  const colors={precision_fueler:'rgba(0,156,125,0.15)',reset_seeker:'rgba(88,162,213,0.15)',sensitivity_sleuth:'rgba(174,79,210,0.15)',body_recalibrator:'rgba(232,133,61,0.15)',curious_explorer:'rgba(78,205,196,0.15)'};
+  document.getElementById('v3-type-icon-preview').textContent=icons[type];
+  document.getElementById('v3-type-name-blur').textContent=names[type];
+  document.getElementById('v3-type-badge').style.background=colors[type];
+}
+function v3BuildResult(){
+  const type=v3State.assignedType;const dna=v3State.q2;const guide=v3State.q3;
+  const typeData={
+    precision_fueler:{emoji:'🎯',colorClass:'type-teal',label:'Your Nutrition Type',title:'The Precision Fueler',desc:"Data-driven optimizer. You fine-tune an already-good diet. Your DNA likely contains specific markers that respond to targeted macro adjustments most people never discover.",insight:"<strong>Key Insight:</strong> Precision Fuelers often discover their DNA calls for a specific protein-to-carb ratio that standard macro calculators miss by 10–15%. That gap is where your results are hiding."},
+    reset_seeker:{emoji:'🔄',colorClass:'type-blue',label:'Your Nutrition Type',title:'The Reset Seeker',desc:"You're ready for a real reset — one based on science, not trends. Multiple diet failures aren't a willpower problem. They're a personalization problem. Your DNA has the answer.",insight:"<strong>Key Insight:</strong> Reset Seekers often discover their DNA needs higher carbs than traditional diets recommend. 73% of our members with your profile were eating wrong for their genetics."},
+    sensitivity_sleuth:{emoji:'🔍',colorClass:'type-purple',label:'Your Nutrition Type',title:'The Sensitivity Sleuth',desc:"You're on a mission to find the food that's working against you. GenoPalate tests for 4 specific genetic sensitivity markers — gluten, lactose, caffeine, and Vitamin D metabolism.",insight:"<strong>Key Insight:</strong> Sensitivity Sleuths most frequently discover gluten or lactose sensitivities with a genetic root. Once identified, 89% report significant symptom improvement within 4 weeks."},
+    body_recalibrator:{emoji:'🦋',colorClass:'type-orange',label:'Your Nutrition Type',title:'The Body Recalibrator',desc:"Your body is in transition and your old nutrition approach no longer fits. This isn't failure — it's biology. GenoPalate tells you exactly what your body needs right now.",insight:"<strong>Key Insight:</strong> Body Recalibrators often need a significant shift in their macro ratios — particularly protein — to support their body's current phase. Your DNA holds the roadmap."},
+    curious_explorer:{emoji:'🧬',colorClass:'type-mint',label:'Your Nutrition Type',title:'The Curious Explorer',desc:"You're in it for the discovery. Fascinated by what your biology can reveal. GenoPalate was made for people like you — the science-curious who want to know what their DNA actually says.",insight:"<strong>Key Insight:</strong> Curious Explorers frequently uncover at least one major surprise in their DNA results — often a nutrient metabolism quirk that explains a lifelong pattern."}
+  };
+  const d=typeData[type]||typeData.curious_explorer;
+  const card=document.getElementById('v3-type-card');
+  card.className='type-reveal-card '+d.colorClass;
+  document.getElementById('v3-type-emoji').textContent=d.emoji;
+  document.getElementById('v3-type-title').textContent=d.title;
+  document.getElementById('v3-type-desc').textContent=d.desc;
+  document.getElementById('v3-type-insight').innerHTML=d.insight;
+
+  const isUpload=dna==='upload';
+
+  // 3 key insights by type
+  const insightsByType={
+    precision_fueler:["Because you want to perform at your best, your DNA likely holds a specific protein-to-carb ratio that standard tracking apps never surface — typically 10–15% off from what your genetics require.","Your performance optimization pattern matches 73% of Precision Fueler members who discovered a measurable macro mismatch after years of eating 'correctly' by generic standards.","Based on your self-directed approach, your matched program delivers the exact data you need to make targeted adjustments yourself."],
+    reset_seeker:["Because you've had multiple diet failures, your DNA almost certainly contains a carbohydrate or fat metabolism variant that made every generic diet the wrong fit for your genetics.","Your reset pattern matches 73% of Reset Seeker members who discovered their optimal diet was significantly different from every approach they had previously tried.","Based on your preference for coaching support, a Registered Dietitian will pair your DNA data with accountability — that's what makes the difference for Reset Seekers."],
+    sensitivity_sleuth:["Because you suspect certain foods are causing you problems, your DNA tests 4 specific sensitivity markers — gluten, lactose, caffeine metabolism, and Vitamin D absorption — that explain the majority of food-reaction patterns.","89% of Sensitivity Sleuths identify their trigger food within the first DNA report, often discovering a genetic root to symptoms they'd been managing for years.","Based on your DNA path and support preference, your matched program walks you through exactly what to do with the sensitivity findings."],
+    body_recalibrator:["Because your body has changed, your nutritional requirements have shifted hormonally, metabolically, and in protein demand. Your DNA profile maps what your body needs in its current phase.","73% of Body Recalibrator members feel measurably better within 60 days of switching to their DNA-aligned plan — not because of willpower, but because the plan finally fits.","Based on your preference for coaching, a Registered Dietitian will recalibrate your plan monthly as your body continues to change."],
+    curious_explorer:["Because you're fascinated by what your DNA can reveal, your report will surface at least one surprising genetic pattern — most Curious Explorers find something that explains a lifelong food experience they couldn't explain before.","Your exploration profile matches members who start with curiosity and end up making some of their most meaningful nutritional changes based on what their genetics actually say.","Based on your DNA path and curiosity depth, GenoPalate has a matched program ready for you on their site."]
+  };
+  const insights=insightsByType[type]||insightsByType.curious_explorer;
+  document.getElementById('v3-insight-1').textContent=insights[0];
+  document.getElementById('v3-insight-2').textContent=insights[1];
+  document.getElementById('v3-insight-3').textContent=insights[2];
+
+  // Step 1 based on DNA path
+  if(isUpload){
+    document.getElementById('v3-step1-title').textContent='Upload your existing DNA data';
+    document.getElementById('v3-step1-detail').textContent='You already have 23andMe or Ancestry data — upload it at GenoPalate.com for results in 24 hours.';
+  } else {
+    document.getElementById('v3-step1-title').textContent='Order your DNA collection kit';
+    document.getElementById('v3-step1-detail').textContent='A simple cheek swab kit ships to your door. Results in 3–4 weeks after receipt.';
+  }
+
+  // Determine recommendation and step 3
+  let recKey;
+  if(guide==='all_in'){recKey='premium';}
+  else if(type==='reset_seeker'||type==='body_recalibrator'||guide==='team_player'){recKey='coaching';}
+  else{recKey='report';}
+
+  const step3Map={
+    report:`140+ food recommendations and precise macro targets for ${d.title} — delivered as a comprehensive, self-implemented action plan.`,
+    coaching:`Monthly 1:1 sessions with a Registered Dietitian who applies DNA insights to your specific nutrition type and adjusts monthly.`,
+    premium:`The full ${d.title} protocol: DNA analysis, blood biomarkers, supplement formulation, and dedicated coaching — nothing left to guesswork.`
+  };
+  document.getElementById('v3-step3-title').textContent=`You get a plan matched to your type`;
+  document.getElementById('v3-step3-detail').textContent=step3Map[recKey]||step3Map.report;
+
+  // Build UTM URL
+  const hasDna=isUpload?'yes':'no';
+  const recUrlMap={report:'report_only',coaching:'coaching',premium:'premium'};
+  const guideUrlKey=recUrlMap[recKey]||'report_only';
+  const urlMap={
+    'yes_report_only':`https://genopalate.com/products/dna-upload?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=upload_report`,
+    'yes_coaching':`https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=upload_coaching`,
+    'yes_premium':`https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=upload_premium`,
+    'no_report_only':`https://genopalate.com/products/dna-kit?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=kit_report`,
+    'no_coaching':`https://genopalate.com/products/nutrition-coaching?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=kit_coaching`,
+    'no_premium':`https://genopalate.com/pages/premium-program?utm_source=quiz&utm_medium=v3&utm_campaign=personalized&quiz_rec=kit_premium`
+  };
+  const urlKey=`${hasDna}_${guideUrlKey}`;
+  const baseUrl=urlMap[urlKey]||urlMap['no_report_only'];
+  const fullUrl=`${baseUrl}&q1=${v3State.q1||''}&q4=${v3State.q4||''}&type=${type||''}&guidance=${recKey}`;
+  console.log('[V3 Result CTA URL]', fullUrl);
+  document.getElementById('v3-redirect-cta').href=fullUrl;
+  document.getElementById('v3-secondary-link').href=`https://genopalate.com/collections/all?utm_source=quiz&utm_medium=v3&type=${type||''}`;
+  document.getElementById('v3-sticky').style.display='block';
+
+  // Testimonial by type
+  const tByType={
+    precision_fueler:{text:'"I was already tracking macros in MyFitnessPal. GenoPalate showed me my protein was 18% too low for my genetics. Three weeks later I broke through a 4-month plateau."',auth:'— David K., verified customer'},
+    reset_seeker:{text:'"I tried keto, Noom, and a nutritionist. Nothing lasted. GenoPalate showed me my DNA was working against every plan I tried. 18 months later, the weight is still off."',auth:'— Rebecca M., verified customer'},
+    sensitivity_sleuth:{text:'"I found out I have a genetic gluten sensitivity that explained years of bloating. I had no idea. GenoPalate changed my life."',auth:'— Maria L., verified customer'},
+    body_recalibrator:{text:'"What worked for me at 38 stopped working at 48. GenoPalate explained exactly why and gave me a new roadmap. I feel better than I did 10 years ago."',auth:'— Linda M., verified customer'},
+    curious_explorer:{text:'"I just wanted to see what my DNA said. Two hours after uploading my 23andMe data, I had 140 food recommendations and finally understood why I react to certain foods."',auth:'— Priya S., verified customer'}
+  };
+  const t=tByType[type]||tByType.curious_explorer;
+  document.getElementById('v3-testimonial').innerHTML=`<div class="star-row">★★★★★</div><div class="testimonial-text">${t.text}</div><div class="testimonial-author">${t.auth}</div>`;
+}
+
+// ===================== SHARED LOADING LOGIC =====================
+function v1RunLoading(prefix,cb){runLoading(prefix,['Matching your nutrition profile...','Identifying your ideal pathway...','Personalizing your recommendation...','Your results are ready!'],cb);}
+function v2RunLoading(prefix,cb){runLoading(prefix,['Analyzing your health profile...','Reviewing dietary history...','Matching clinical indicators...','Your assessment is ready!'],cb);}
+function v3RunLoading(prefix,cb){runLoading(prefix,['Analyzing your quiz signals...','Identifying your nutrition type...','Matching your type profile...','Your nutrition type is ready!'],cb);}
+
+function runLoading(prefix,msgs,cb){
+  let pct=0;
+  const pctEl=document.getElementById(prefix+'-load-pct');
+  const barEl=document.getElementById(prefix+'-load-bar');
+  const msgEl=document.getElementById(prefix+'-load-msg');
+  const steps=[
+    {to:30,msg:msgs[0],dur:1400},
+    {to:62,msg:msgs[1],dur:1200},
+    {to:88,msg:msgs[2],dur:1100},
+    {to:100,msg:msgs[3],dur:600}
+  ];
+  let si=0;
+  function runStep(){
+    if(si>=steps.length){cb();return;}
+    const step=steps[si++];
+    msgEl.style.opacity='0';
+    setTimeout(()=>{msgEl.textContent=step.msg;msgEl.style.opacity='1';},150);
+    const start=pct;const end=step.to;const dur=step.dur;const t0=performance.now();
+    function tick(now){
+      const progress=Math.min(1,(now-t0)/dur);
+      pct=Math.round(start+(end-start)*progress);
+      pctEl.textContent=pct+'%';
+      barEl.style.width=pct+'%';
+      if(progress<1)requestAnimationFrame(tick);
+      else runStep();
+    }
+    requestAnimationFrame(tick);
+  }
+  runStep();
+}
+
+// ===================== STICKY REDIRECT HANDLERS =====================
+function v1StickyClick(){
+  const url=document.getElementById('v1-redirect-cta').href;
+  if(url)window.open(url,'_blank');
+}
+function v2StickyClick(){
+  const url=document.getElementById('v2-redirect-cta').href;
+  if(url)window.open(url,'_blank');
+}
+function v3StickyClick(){
+  const url=document.getElementById('v3-redirect-cta').href;
+  if(url)window.open(url,'_blank');
+}
+
+// ===================== FAQ ACCORDION =====================
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  item.classList.toggle('open');
+}
+
+// ===================== TAB SWITCHING =====================
+function switchQuiz(v){
+  ['v1','v2','v3'].forEach(x=>{
+    document.getElementById('quiz-'+x).classList.toggle('active',x===v);
+    document.getElementById('quiz-'+x).classList.toggle('hidden',x!==v);
+    document.getElementById('meta-'+x).classList.toggle('hidden',x!==v);
+    const sticky=document.getElementById(x+'-sticky');
+    if(sticky)sticky.style.display='none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['v1','v2','v3'][i]===v);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== v3 VARIANT: Direct redirect on email/phone submit ===== */
+function submitAndRedirect(variant){
+  const emailEl=document.getElementById(variant+'-email-input');
+  const email=emailEl?emailEl.value.trim():'';
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(emailEl){emailEl.style.borderColor='#ff5e5e';emailEl.focus();}
+    alert('Please enter a valid email address to continue.');
+    return;
+  }
+  const phoneEl=document.getElementById(variant+'-phone-input');
+  const phone=phoneEl?phoneEl.value.trim():'';
+  const nameEl=document.getElementById(variant+'-name-input');
+  const name=nameEl?nameEl.value.trim():'';
+  const state=(variant==='v1'?v1State:variant==='v2'?v2State:v3State);
+  const params=new URLSearchParams({
+    utm_source:'quiz',
+    utm_medium:variant,
+    utm_campaign:'quiz-email-redirect',
+    utm_content:'2026-04',
+    quiz_email:email
+  });
+  if(phone)params.append('quiz_phone',phone);
+  if(name)params.append('quiz_name',name);
+  Object.keys(state).forEach(k=>{
+    if(k!=='step'&&state[k]!=null&&state[k]!==undefined){
+      params.append('quiz_'+k,Array.isArray(state[k])?state[k].join(','):String(state[k]));
+    }
+  });
+  const destURL='https://www.genopalate.com/pages/select-dna-source?'+params.toString();
+  /* Show brief redirect screen */
+  const container=document.querySelector('.quiz-variant.active')||document.body;
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,22,40,0.98);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999;animation:fadeUp 0.3s ease';
+  overlay.innerHTML='<div style="text-align:center;padding:40px 24px;max-width:420px">'
+    +'<div class="loading-dna-helix" style="width:80px;height:80px;margin:0 auto 24px;border:3px solid rgba(0,156,125,0.15);border-top-color:#009c7d;border-radius:50%;animation:spin 1s linear infinite"></div>'
+    +'<div style="font-family:\'DM Serif Display\',serif;font-size:26px;color:#fff;margin-bottom:10px">Your personalized plan is ready</div>'
+    +'<div style="font-size:14px;color:#8fa5bf;line-height:1.5">Redirecting you to genopalate.com to choose your DNA source...</div>'
+    +'</div>';
+  document.body.appendChild(overlay);
+  if(!document.getElementById('redirect-spin-kf')){
+    const st=document.createElement('style');st.id='redirect-spin-kf';
+    st.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(st);
+  }
+  setTimeout(()=>{window.location.href=destURL;},1400);
+}
+</script>
+</body>
+</html>
