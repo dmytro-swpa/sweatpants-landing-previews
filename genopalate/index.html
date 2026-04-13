@@ -1,33 +1,88 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GenoPalate — Quiz Prototypes · Sweat Pants Agency</title>
+<title>Genopalate — Quiz Prototypes · Sweat Pants Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0a1929;color:#fff;margin:0;padding:40px 24px;line-height:1.5}
-.wrap{max-width:760px;margin:0 auto}
-.back{display:inline-block;color:#8fa5bf;font-size:13px;text-decoration:none;margin-bottom:20px}
-.back:hover{color:#fff}
-h1{font-size:28px;margin:0 0 8px;font-family:Georgia,serif}
-.sub{color:#8fa5bf;margin-bottom:32px;font-size:15px}
-.card{display:block;padding:24px;border:1.5px solid rgba(88,162,213,0.25);border-radius:14px;margin-bottom:16px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.03);transition:all .2s ease}
-.card:hover{border-color:#009c7d;background:rgba(0,156,125,0.08);transform:translateY(-2px)}
-.card h2{font-size:20px;margin:0 0 6px;font-family:Georgia,serif}
-.card p{color:#8fa5bf;margin:0;font-size:14px}
-.tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#009c7d;margin-bottom:8px}
-.new{background:#ff9b3d;color:#0a1929;padding:2px 8px;border-radius:3px;margin-left:6px}
-.footer{margin-top:48px;color:#5a7590;font-size:12px;border-top:1px solid rgba(88,162,213,0.15);padding-top:20px}
+  :root{
+    --bg-start:#6b5dd3;
+    --bg-end:#9689e8;
+    --card:#ffffff;
+    --ink:#1a1a2e;
+    --muted:#6b7280;
+    --btn-start:#6b5dd3;
+    --btn-end:#8677e0;
+    --btn-shadow:rgba(107,93,211,.35);
+    --accent:#10b981;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:linear-gradient(135deg,var(--bg-start) 0%,var(--bg-end) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:48px 32px 96px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.88);text-decoration:none;font-size:14px;margin-bottom:28px;font-weight:500;transition:color .15s}
+  .back:hover{color:#fff}
+  .header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .header-emoji{font-size:40px;line-height:1}
+  h1{font-size:40px;font-weight:800;color:#fff;margin:0;letter-spacing:-0.02em}
+  .sub{color:rgba(255,255,255,0.9);font-size:15px;margin:0 0 36px 0;font-weight:500;max-width:640px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+  .card{background:var(--card);border-radius:16px;padding:26px 26px 22px;box-shadow:0 12px 40px rgba(30,20,80,0.15),0 2px 8px rgba(30,20,80,0.08);display:flex;flex-direction:column;min-height:220px;transition:transform .2s ease, box-shadow .2s ease;position:relative}
+  .card:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(30,20,80,0.22)}
+  .badge{position:absolute;top:18px;right:18px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px}
+  .card-tag{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--btn-start);margin-bottom:10px}
+  .card-name{font-size:19px;font-weight:700;color:var(--ink);margin:0 0 10px 0;letter-spacing:-0.01em;line-height:1.3}
+  .card-desc{font-size:14px;color:var(--muted);line-height:1.55;margin:0 0 20px 0;flex:1}
+  .card-cta{display:inline-block;background:linear-gradient(135deg,var(--btn-start),var(--btn-end));color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;padding:10px 16px;border-radius:8px;align-self:flex-start;transition:all .15s ease;box-shadow:0 4px 14px var(--btn-shadow);letter-spacing:0.01em}
+  .card-cta:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--btn-shadow)}
+  .footer{margin-top:64px;color:rgba(255,255,255,0.75);font-size:12px;border-top:1px solid rgba(255,255,255,0.15);padding-top:22px}
+  @media(max-width:640px){.wrap{padding:32px 20px 60px}h1{font-size:30px}.grid{grid-template-columns:1fr;gap:16px}.card{padding:22px 20px}}
 </style>
-</head><body><div class="wrap">
-<a href="../" class="back">← All clients</a>
-<h1>GenoPalate — Quiz Prototypes</h1>
-<p class="sub">DNA-based personalized nutrition. Each prototype has a tab switcher — play all 3 quiz variants (Short Sell / Diagnostic / Personality). Mobile-friendly.</p>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" class="back">← All clients</a>
+  <div class="header">
+    <span class="header-emoji">🧬</span>
+    <h1>Genopalate</h1>
+  </div>
+  <p class="sub">DNA-based personalized nutrition. Each prototype has a tab switcher — play all 3 quiz variants (Short Sell 5Q / Diagnostic 7Q / Personality 6Q). Mobile-friendly.</p>
 
-<a href="./v3-email-redirect.html" class="card"><span class="tag">v3 · Email Redirect<span class="new">LATEST</span></span><h2>Quiz → Email → /pages/select-dna-source</h2><p>Pure lead-gen funnel. Email-only (no phone), quiz answers passed as URL params for retargeting. Best for cold Meta traffic.</p></a>
+  <div class="grid">
+    <article class="card">
+      <span class="badge">Latest</span>
+      <div class="card-tag">v3 · Email Redirect</div>
+      <h2 class="card-name">Quiz → Email → /pages/select-dna-source</h2>
+      <p class="card-desc">Pure lead-gen funnel. Email-only (no phone). All quiz answers passed as URL params for personalization + retargeting. Best for cold Meta traffic.</p>
+      <a class="card-cta" href="./v3-email-redirect.html">Open Preview →</a>
+    </article>
 
-<a href="./v1-site-redirect.html" class="card"><span class="tag">v1 · Product Redirect</span><h2>Quiz → Personalized Profile → Specific product on genopalate.com</h2><p>Quiz shows personalized nutrition profile with insights, then CTA redirects to the right product (Upload / Kit / Coaching / Premium) with UTM + answer params.</p></a>
+    <article class="card">
+      <div class="card-tag">v1 · Product Redirect</div>
+      <h2 class="card-name">Quiz → Personalized Profile → Product page</h2>
+      <p class="card-desc">Quiz shows personalized nutrition profile with insights, then single CTA redirects to the right product (Upload / Kit / Coaching / Premium) with UTM + answer params.</p>
+      <a class="card-cta" href="./v1-site-redirect.html">Open Preview →</a>
+    </article>
 
-<a href="./v2-site-redirect.html" class="card"><span class="tag">v2 · Product Redirect (staging)</span><h2>Identical to v1 — staged for design iterations</h2><p>Use this file for future copy / visual variations without touching v1.</p></a>
+    <article class="card">
+      <div class="card-tag">v2 · Staging</div>
+      <h2 class="card-name">Copy of v1 for design iterations</h2>
+      <p class="card-desc">Identical to v1 currently. Use this file for future copy or visual variations without touching the v1 control.</p>
+      <a class="card-cta" href="./v2-site-redirect.html">Open Preview →</a>
+    </article>
+  </div>
 
-<p class="footer">Built 2026-04-14 · Viktor (LP) · Diana (CRO) · Sophia (strategy) · Leo (copy) · Kai (competitor intel)</p>
-</div></body></html>
+  <div class="footer">Built 2026-04-14 · Viktor (LP) · Diana (CRO) · Sophia (strategy) · Leo (copy) · Kai (competitor intel)</div>
+</div>
+</body>
+</html>

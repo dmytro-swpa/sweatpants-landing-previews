@@ -1,32 +1,101 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sweat Pants Agency — Landing Previews</title>
+<title>Landing Previews · Sweat Pants Agency</title>
+<meta name="description" content="Client landing page and quiz prototypes — Sweat Pants Agency.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0a1929;color:#fff;margin:0;padding:60px 24px;line-height:1.5}
-.wrap{max-width:760px;margin:0 auto}
-h1{font-size:32px;margin:0 0 10px;font-family:Georgia,serif}
-.sub{color:#8fa5bf;margin-bottom:40px;font-size:15px}
-h2{font-size:14px;text-transform:uppercase;letter-spacing:0.12em;color:#5a7590;margin:32px 0 12px;font-weight:700}
-.client{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border:1.5px solid rgba(88,162,213,0.2);border-radius:12px;margin-bottom:10px;text-decoration:none;color:#fff;background:rgba(255,255,255,0.02);transition:all .18s ease}
-.client:hover{border-color:#009c7d;background:rgba(0,156,125,0.08);transform:translateX(2px)}
-.client-name{font-size:17px;font-weight:600;font-family:Georgia,serif}
-.client-meta{color:#8fa5bf;font-size:13px}
-.arrow{color:#009c7d;font-size:18px}
-.footer{margin-top:60px;color:#5a7590;font-size:12px;border-top:1px solid rgba(88,162,213,0.15);padding-top:20px}
-.footer code{background:rgba(88,162,213,0.12);padding:2px 6px;border-radius:4px;font-size:11px}
+  :root{
+    --bg-start:#6b5dd3;
+    --bg-end:#9689e8;
+    --card:#ffffff;
+    --ink:#1a1a2e;
+    --muted:#6b7280;
+    --btn-start:#6b5dd3;
+    --btn-end:#8677e0;
+    --btn-shadow:rgba(107,93,211,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:linear-gradient(135deg,var(--bg-start) 0%,var(--bg-end) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:64px 32px 96px}
+  .header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .header-emoji{font-size:42px;line-height:1}
+  h1{font-size:44px;font-weight:800;color:#fff;margin:0;letter-spacing:-0.02em}
+  .sub{color:rgba(255,255,255,0.9);font-size:16px;margin:0 0 40px 0;font-weight:500}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+  .card{background:var(--card);border-radius:16px;padding:28px 28px 24px;box-shadow:0 12px 40px rgba(30,20,80,0.15),0 2px 8px rgba(30,20,80,0.08);display:flex;flex-direction:column;min-height:240px;transition:transform .2s ease, box-shadow .2s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(30,20,80,0.22),0 4px 10px rgba(30,20,80,0.1)}
+  .card-emoji{font-size:34px;line-height:1;margin-bottom:16px}
+  .card-name{font-size:22px;font-weight:700;color:var(--ink);margin:0 0 10px 0;letter-spacing:-0.01em}
+  .card-desc{font-size:14.5px;color:var(--muted);line-height:1.55;margin:0 0 22px 0;flex:1}
+  .card-cta{display:inline-block;background:linear-gradient(135deg,var(--btn-start),var(--btn-end));color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 18px;border-radius:8px;align-self:flex-start;transition:all .15s ease;box-shadow:0 4px 14px var(--btn-shadow);letter-spacing:0.01em}
+  .card-cta:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--btn-shadow)}
+  .card-cta:active{transform:translateY(0)}
+  .meta-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .meta-pill{font-size:11px;color:var(--muted);background:#f3f4f8;padding:4px 10px;border-radius:100px;font-weight:500}
+  .empty{color:rgba(255,255,255,0.88);text-align:center;padding:60px 20px;font-size:15px;background:rgba(255,255,255,0.08);border-radius:14px;border:1px dashed rgba(255,255,255,0.25)}
+  .footer{margin-top:72px;color:rgba(255,255,255,0.75);font-size:12px;border-top:1px solid rgba(255,255,255,0.15);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .footer code{background:rgba(0,0,0,0.2);padding:3px 8px;border-radius:5px;font-size:11px;color:rgba(255,255,255,0.92)}
+  @media(max-width:640px){.wrap{padding:40px 20px 60px}h1{font-size:32px}.header-emoji{font-size:32px}.grid{grid-template-columns:1fr;gap:16px}.card{padding:24px 22px 20px;min-height:200px}}
 </style>
-</head><body><div class="wrap">
-<h1>Sweat Pants Agency</h1>
-<p class="sub">Landing page & quiz prototypes for client review. Each prototype is interactive and mobile-friendly.</p>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <span class="header-emoji">🔍</span>
+    <h1>Landing Previews</h1>
+  </div>
+  <p class="sub">Explore different website versions and designs</p>
 
-<h2>Clients</h2>
+  <div id="grid" class="grid"></div>
 
-<a href="./genopalate/" class="client">
-  <div><div class="client-name">GenoPalate</div><div class="client-meta">DNA nutrition · 3 quiz prototypes</div></div>
-  <span class="arrow">→</span>
-</a>
+  <div class="footer">
+    <div>Sweat Pants Agency · Performance marketing for DTC</div>
+    <div><code>github.com/dmytro-swpa/sweatpants-landing-previews</code></div>
+  </div>
+</div>
 
-<p class="footer">Sweat Pants Agency · <code>github.com/dmytro-swpa/sweatpants-landing-previews</code></p>
-</div></body></html>
+<script>
+(async function(){
+  const grid=document.getElementById('grid');
+  try{
+    const res=await fetch('./clients.json?t='+Date.now());
+    const data=await res.json();
+    const list=(data.clients||[]).slice().sort((a,b)=>a.name.localeCompare(b.name));
+    if(!list.length){
+      grid.outerHTML='<div class="empty">No clients yet. Deploy your first landing prototype to get started.</div>';
+      return;
+    }
+    grid.innerHTML=list.map(c=>{
+      const metaHTML=[
+        c.updated?`<span class="meta-pill">Updated ${c.updated}</span>`:'',
+        c.versions?`<span class="meta-pill">${c.versions} versions</span>`:''
+      ].filter(Boolean).join('');
+      return `<article class="card">
+        <div class="card-emoji">${c.emoji||'📄'}</div>
+        <h2 class="card-name">${c.name}</h2>
+        <p class="card-desc">${c.description||''}</p>
+        <a class="card-cta" href="./${c.slug}/">Explore Versions →</a>
+        ${metaHTML?`<div class="meta-row">${metaHTML}</div>`:''}
+      </article>`;
+    }).join('');
+  }catch(err){
+    grid.outerHTML='<div class="empty">Could not load client list. Check clients.json.</div>';
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>

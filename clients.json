@@ -1,0 +1,11 @@
+{
+  "clients": [
+    {
+      "slug": "genopalate",
+      "name": "Genopalate",
+      "emoji": "🧬",
+      "description": "DNA-based personalized nutrition. Explore different HTML versions and quiz prototypes. Compare designs and implementations for the quiz funnel.",
+      "updated": "2026-04-14"
+    }
+  ]
+}
